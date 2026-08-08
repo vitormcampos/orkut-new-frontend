@@ -38,6 +38,12 @@ export function Navbar() {
             >
               Início
             </Link>
+            <Link
+              to="/friends"
+              className="text-muted-foreground transition-colors hover:text-foreground"
+            >
+              Amigos
+            </Link>
           </nav>
         </div>
         <div className="flex items-center gap-3">

@@ -53,3 +53,20 @@ export interface UserDto {
   isActive: boolean
   createdAt: string
 }
+
+export interface SendFriendshipRequest {
+  addresseeUsername: string
+}
+
+export interface FriendshipDto {
+  id: string
+  requesterId: string
+  requesterName?: string | null
+  requesterUsername?: string | null
+  addresseeId: string
+  addresseeName?: string | null
+  addresseeUsername?: string | null
+  status?: string | null
+  requestedAt: string
+  respondedAt?: string | null
+}
