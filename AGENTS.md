@@ -88,6 +88,69 @@ app/lib/api/
 - `tokenStore` uses `typeof window === "undefined"` guards for SSR safety.
 - `api.upload()` for `multipart/form-data` (photo upload).
 
+## Async Data Handling
+
+Consolidated patterns for async data fetching and error handling. Reuse these
+helpers instead of writing ad-hoc `.then/.catch` logic.
+
+### `getErrorMessage(err, fallback?)`
+
+Location: `app/lib/api/client.ts`.
+
+```ts
+getErrorMessage(err)                          // ApiError.message or default fallback
+getErrorMessage(err, "Erro ao salvar.")       // custom pt-BR fallback
+```
+
+- Returns `err.message` when `err instanceof ApiError`; otherwise the fallback
+  (always pt-BR, user-facing).
+- **Always** use this in `catch` blocks — do not hand-roll
+  `err instanceof ApiError ? err.message : "..."`.
+
+### `useAsyncData(fetcher, deps?, options?)`
+
+Location: `app/lib/use-async-data.ts`. The canonical hook for loading data in an
+effect. Replaces manual `.then/.catch/.finally` + cancellation-flag boilerplate.
+
+```tsx
+const { data, setData, loading, error, notFound, refresh } = useAsyncData(
+  () => getFriends(),
+  [],                 // extra deps that re-trigger the fetch (besides refresh())
+  {                   // all options optional
+    resetOnFetch: true,
+    fallbackError: "Erro ao carregar dados.",
+    mapError: (err) => {
+      if (err instanceof ApiError && err.status === 404) {
+        return { message: "Não encontrado.", notFound: true }
+      }
+      return null // null → default handling (ApiError.message || fallbackError)
+    },
+  }
+)
+```
+
+Returned fields:
+- `data`, `setData` — value + manual/optimistic setter (e.g. adjust a counter
+  after a mutation without refetching).
+- `loading` — true while the fetch is in flight.
+- `error` — `string | null`, already normalized.
+- `notFound` — true when `mapError` flags a 404.
+- `refresh()` — re-runs the fetcher (useful after mutations).
+
+Guarantees:
+- Cancellation-safe (internal `cancelled` flag — no setState after unmount).
+- The fetcher lives in a ref, so the effect re-runs only on `deps`/`refresh`,
+  never on function identity.
+
+### Conventions
+
+- Mutations / form submissions use `async/await` + `try/catch/finally`
+  (not `.then`): `setLoading(true)` → `await api()` → `catch` → `finally setLoading(false)`.
+- Fetch-on-mount uses `useAsyncData`.
+- Surface errors via `getErrorMessage`; never leak raw `Error.message` to the UI.
+- `ApiError` (from `~/lib/api/client`) carries `status` + `ProblemDetails`.
+- Fallback messages are always pt-BR.
+
 ## Formatting
 
 - Prettier with `prettier-plugin-tailwindcss`. Config: no semis, double quotes, trailing commas (es5), `lf` line endings.

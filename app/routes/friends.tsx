@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react"
+import { useState } from "react"
 import { useSearchParams } from "react-router"
 import type { Route } from "./+types/friends"
 import { Navbar } from "~/components/navbar"
@@ -14,7 +14,8 @@ import {
 import { Field, FieldGroup, FieldLabel } from "~/components/ui/field"
 import { Input } from "~/components/ui/input"
 import { useAuth } from "~/lib/auth-context"
-import { ApiError } from "~/lib/api/client"
+import { getErrorMessage } from "~/lib/api/client"
+import { useAsyncData } from "~/lib/use-async-data"
 import {
   acceptFriendRequest,
   getFriends,
@@ -32,47 +33,6 @@ export function meta({}: Route.MetaArgs) {
 
 type Tab = "amigos" | "pending" | "sent" | "add"
 
-function useFriendshipData<T>(fetcher: () => Promise<T>): {
-  data: T | null
-  loading: boolean
-  error: string | null
-  refresh: () => void
-} {
-  const [data, setData] = useState<T | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const [trigger, setTrigger] = useState(0)
-
-  const refresh = useCallback(() => setTrigger((t) => t + 1), [])
-
-  useEffect(() => {
-    let cancelled = false
-    setLoading(true)
-    setError(null)
-
-    fetcher()
-      .then((result) => {
-        if (!cancelled) setData(result)
-      })
-      .catch((err) => {
-        if (!cancelled) {
-          setError(
-            err instanceof ApiError ? err.message : "Erro ao carregar dados."
-          )
-        }
-      })
-      .finally(() => {
-        if (!cancelled) setLoading(false)
-      })
-
-    return () => {
-      cancelled = true
-    }
-  }, [trigger])
-
-  return { data, loading, error, refresh }
-}
-
 export default function FriendsPage() {
   const { user, loading: authLoading } = useAuth()
   const [searchParams, setSearchParams] = useSearchParams()
@@ -84,9 +44,9 @@ export default function FriendsPage() {
     text: string
   } | null>(null)
 
-  const friends = useFriendshipData(() => getFriends())
-  const pending = useFriendshipData(() => getPendingRequests())
-  const sent = useFriendshipData(() => getSentRequests())
+  const friends = useAsyncData(() => getFriends())
+  const pending = useAsyncData(() => getPendingRequests())
+  const sent = useAsyncData(() => getSentRequests())
 
   function setTab(t: Tab) {
     setSearchParams({ tab: t }, { replace: true })
@@ -108,7 +68,7 @@ export default function FriendsPage() {
     } catch (err) {
       setMessage({
         type: "error",
-        text: err instanceof ApiError ? err.message : "Erro. Tente novamente.",
+        text: getErrorMessage(err, "Erro. Tente novamente."),
       })
     } finally {
       setActionLoading(null)
@@ -398,9 +358,7 @@ function AddFriendTab({
       setUsername("")
       onSuccess()
     } catch (err) {
-      onError(
-        err instanceof ApiError ? err.message : "Erro ao enviar solicitação."
-      )
+      onError(getErrorMessage(err, "Erro ao enviar solicitação."))
     } finally {
       setSending(false)
     }

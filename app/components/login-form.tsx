@@ -5,7 +5,7 @@ import { Field, FieldError, FieldLabel } from "~/components/ui/field"
 import { Input } from "~/components/ui/input"
 import { cn } from "~/lib/utils"
 import { useAuth } from "~/lib/auth-context"
-import { ApiError } from "~/lib/api/client"
+import { getErrorMessage } from "~/lib/api/client"
 
 export function LoginForm({
   className,
@@ -41,11 +41,7 @@ export function LoginForm({
       await login({ email, password })
       navigate("/")
     } catch (err) {
-      setError(
-        err instanceof ApiError
-          ? err.message
-          : "Ocorreu um erro inesperado. Tente novamente."
-      )
+      setError(getErrorMessage(err))
     } finally {
       setLoading(false)
     }

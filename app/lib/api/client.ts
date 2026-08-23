@@ -78,6 +78,18 @@ export class ApiError extends Error {
   }
 }
 
+/**
+ * Normaliza um erro capturado em mensagem exibível.
+ * Extrai `message` quando o erro é um `ApiError`; caso contrário, retorna o
+ * `fallback` (que deve ser uma mensagem em pt-BR amigável ao usuário).
+ */
+export function getErrorMessage(
+  err: unknown,
+  fallback = "Ocorreu um erro inesperado. Tente novamente."
+): string {
+  return err instanceof ApiError ? err.message : fallback
+}
+
 async function request<T>(path: string, options: RequestOptions = {}): Promise<T> {
   const { method = "GET", body, headers = {} } = options
 

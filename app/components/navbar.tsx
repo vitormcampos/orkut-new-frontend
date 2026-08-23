@@ -1,6 +1,4 @@
 import { Link, useNavigate } from "react-router"
-import { Button } from "~/components/ui/button"
-import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar"
 import { useAuth } from "~/lib/auth-context"
 
 function getInitials(name: string): string {
@@ -22,69 +20,64 @@ export function Navbar() {
   }
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur-sm supports-backdrop-filter:bg-background/60">
-      <div className="container mx-auto flex h-14 items-center justify-between px-4">
+    <header className="app-header">
+      <div className="header-inner">
         <div className="flex items-center gap-6">
-          <Link to="/" className="flex items-center gap-2 font-semibold">
-            <span className="flex size-8 items-center justify-center rounded-full bg-primary text-sm font-bold text-primary-foreground">
-              n
-            </span>
-            <span className="hidden text-lg sm:inline">newkut</span>
+          <Link to="/" className="brand">
+            <span className="brand-mark">n</span>
+            <span>newkut</span>
           </Link>
-          <nav className="hidden items-center gap-4 text-sm md:flex">
-            <Link
-              to="/"
-              className="text-muted-foreground transition-colors hover:text-foreground"
-            >
-              Início
-            </Link>
-            <Link
-              to="/friends"
-              className="text-muted-foreground transition-colors hover:text-foreground"
-            >
-              Amigos
-            </Link>
+          <nav className="header-nav">
+            <Link to="/">Início</Link>
+            <Link to="/friends">Amigos</Link>
           </nav>
         </div>
-        <div className="flex items-center gap-3">
+
+        <div className="header-actions">
           {loading ? null : user ? (
-            <div className="flex items-center gap-3">
-              <span className="hidden text-sm text-muted-foreground sm:inline">
+            <>
+              <Link
+                to={user.username ? `/u/${user.username}` : "/me"}
+                className="hidden text-sm text-muted-foreground transition-colors hover:text-foreground sm:inline"
+              >
                 {user.name}
-              </span>
-              <Link to="/me">
-                <Avatar className="size-8">
-                  {user.profilePicture ? (
-                    <AvatarImage
-                      src={user.profilePicture}
-                      alt={user.name ?? ""}
-                    />
-                  ) : (
-                    <AvatarFallback>
-                      {user.name ? getInitials(user.name) : "U"}
-                    </AvatarFallback>
-                  )}
-                </Avatar>
               </Link>
-              <Button variant="ghost" size="sm" onClick={handleLogout}>
+              <Link
+                to={user.username ? `/u/${user.username}` : "/me"}
+                className="avatar-btn"
+                aria-label="Abrir meu perfil"
+                style={
+                  user.profilePicture
+                    ? { backgroundImage: `url(${user.profilePicture})`, backgroundSize: "cover", backgroundPosition: "center" }
+                    : undefined
+                }
+              >
+                {user.profilePicture
+                  ? null
+                  : user.name
+                    ? getInitials(user.name)
+                    : "U"}
+              </Link>
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+              >
                 Sair
-              </Button>
-            </div>
+              </button>
+            </>
           ) : (
-            <div className="flex items-center gap-2">
+            <>
               <Link
                 to="/login"
-                className="inline-flex h-8 items-center justify-center rounded-md px-2.5 text-sm font-medium transition-colors hover:bg-muted hover:text-foreground"
+                className="text-sm text-muted-foreground transition-colors hover:text-foreground"
               >
                 Entrar
               </Link>
-              <Link
-                to="/register"
-                className="inline-flex h-9 items-center justify-center gap-1.5 rounded-md bg-primary px-2.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/80"
-              >
+              <Link to="/register" className="btn small primary">
                 Cadastrar
               </Link>
-            </div>
+            </>
           )}
         </div>
       </div>

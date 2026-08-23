@@ -1,13 +1,26 @@
 import { useEffect, useState } from "react"
-import { useParams } from "react-router"
+import { Link, useParams } from "react-router"
 import type { Route } from "./+types/profile"
 import { Navbar } from "~/components/navbar"
-import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar"
-import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card"
-import { ApiError } from "~/lib/api/client"
+import { useAuth } from "~/lib/auth-context"
+import { ApiError, getErrorMessage } from "~/lib/api/client"
+import { useAsyncData } from "~/lib/use-async-data"
 import { getPublicProfile } from "~/lib/api/profile"
+import {
+  acceptFriendRequest,
+  getFriends,
+  getFriendsInCommon,
+  getPendingRequests,
+  getSentRequests,
+  rejectFriendRequest,
+  removeFriendship,
+  sendFriendRequest,
+} from "~/lib/api/friendship"
 import { relationshipStatusLabel } from "~/lib/relationship-status"
-import type { PublicProfileDto } from "~/lib/api/types"
+import type {
+  FriendshipDto,
+  UserSummaryDto,
+} from "~/lib/api/types"
 
 export function meta({}: Route.MetaArgs) {
   return [{ title: "Perfil | newkut" }]
@@ -22,44 +35,112 @@ function getInitials(name: string): string {
     .toUpperCase()
 }
 
+function memberSince(createdAt: string | undefined): string {
+  if (!createdAt) return ""
+  const year = new Date(createdAt).getFullYear()
+  return Number.isNaN(year) ? "" : String(year)
+}
+
+function firstName(name: string): string {
+  return name.split(" ")[0]
+}
+
+type TabKey = "publicacoes" | "sobre" | "comunidades" | "conexoes"
+
+type FriendState =
+  | { kind: "none" }
+  | { kind: "sent"; id: string }
+  | { kind: "received"; id: string }
+  | { kind: "friends"; id: string }
+
+function deriveFriendState(
+  friends: FriendshipDto[],
+  pending: FriendshipDto[],
+  sent: FriendshipDto[],
+  profileId: string
+): FriendState {
+  const accepted = friends.find(
+    (f) => f.requesterId === profileId || f.addresseeId === profileId
+  )
+  if (accepted) return { kind: "friends", id: accepted.id }
+
+  const received = pending.find((f) => f.requesterId === profileId)
+  if (received) return { kind: "received", id: received.id }
+
+  const sentRequest = sent.find((f) => f.addresseeId === profileId)
+  if (sentRequest) return { kind: "sent", id: sentRequest.id }
+
+  return { kind: "none" }
+}
+
+const AVATAR_GRADIENTS = [
+  "linear-gradient(135deg, oklch(70% .1 185), oklch(50% .1 220))",
+  "linear-gradient(135deg, oklch(76% .11 80), oklch(58% .12 45))",
+  "linear-gradient(135deg, oklch(70% .1 300), oklch(50% .12 280))",
+  "linear-gradient(135deg, oklch(72% .1 150), oklch(52% .12 180))",
+  "linear-gradient(135deg, oklch(76% .11 28), oklch(59% .13 349))",
+]
+
+function MiniAvatar({ name, picture }: { name: string; picture?: string | null }) {
+  const idx = (name.length ?? 0) % AVATAR_GRADIENTS.length
+  if (picture) {
+    return (
+      <span className="mini-avatar">
+        <img src={picture} alt={name} />
+      </span>
+    )
+  }
+  return (
+    <span className="mini-avatar" style={{ background: AVATAR_GRADIENTS[idx] }}>
+      {getInitials(name) || "?"}
+    </span>
+  )
+}
+
 export default function ProfilePage() {
   const { username } = useParams()
-  const [profile, setProfile] = useState<PublicProfileDto | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const [notFound, setNotFound] = useState(false)
+  const { user: me, loading: authLoading } = useAuth()
+
+  const {
+    data: profile,
+    setData: setProfile,
+    loading,
+    error,
+    notFound,
+  } = useAsyncData(
+    async () => {
+      if (!username) throw new Error("Username ausente")
+      return getPublicProfile(username)
+    },
+    [username],
+    {
+      resetOnFetch: true,
+      fallbackError: "Erro ao carregar perfil.",
+      mapError: (err) => {
+        if (err instanceof ApiError && err.status === 404) {
+          return { message: "Usuário não encontrado.", notFound: true }
+        }
+        if (err instanceof ApiError && err.status === 401) {
+          return {
+            message: "Você precisa estar autenticado para ver este perfil.",
+          }
+        }
+        return null
+      },
+    }
+  )
+
+  const [tab, setTab] = useState<TabKey>("sobre")
+  const [friendState, setFriendState] = useState<FriendState | null>(null)
+  const [commonFriends, setCommonFriends] = useState<UserSummaryDto[]>([])
+  const [actionLoading, setActionLoading] = useState(false)
+  const [actionError, setActionError] = useState<string | null>(null)
+
+  const isSelf = !!me && !!profile && me.id === profile.id
 
   useEffect(() => {
-    if (!username) return
-
-    let cancelled = false
-    setLoading(true)
-    setError(null)
-    setNotFound(false)
-
-    getPublicProfile(username)
-      .then((data) => {
-        if (!cancelled) setProfile(data)
-      })
-      .catch((err) => {
-        if (cancelled) return
-        if (err instanceof ApiError && err.status === 404) {
-          setNotFound(true)
-        } else if (err instanceof ApiError && err.status === 401) {
-          setError("Você precisa estar autenticado para ver este perfil.")
-        } else {
-          setError(
-            err instanceof ApiError ? err.message : "Erro ao carregar perfil."
-          )
-        }
-      })
-      .finally(() => {
-        if (!cancelled) setLoading(false)
-      })
-
-    return () => {
-      cancelled = true
-    }
+    setFriendState(null)
+    setCommonFriends([])
   }, [username])
 
   useEffect(() => {
@@ -68,6 +149,78 @@ export default function ProfilePage() {
     }
   }, [profile])
 
+  useEffect(() => {
+    if (!profile || !me || me.id === profile.id) return
+
+    const profileId = profile.id
+    let cancelled = false
+
+    async function load() {
+      try {
+        const [friends, pending, sent] = await Promise.all([
+          getFriends(),
+          getPendingRequests(),
+          getSentRequests(),
+        ])
+        if (!cancelled) setFriendState(deriveFriendState(friends, pending, sent, profileId))
+      } catch {
+        if (!cancelled) setFriendState(null)
+      }
+
+      try {
+        const common = await getFriendsInCommon(profileId)
+        if (!cancelled) setCommonFriends(common)
+      } catch {
+        if (!cancelled) setCommonFriends([])
+      }
+    }
+
+    load()
+    return () => {
+      cancelled = true
+    }
+  }, [profile, me])
+
+  async function handleFriendAction(action: "send" | "accept" | "reject" | "remove", id?: string) {
+    if (!profile) return
+    setActionLoading(true)
+    setActionError(null)
+    try {
+      if (action === "send") {
+        await sendFriendRequest({ addresseeUsername: profile.username })
+      } else if (action === "accept" && id) {
+        await acceptFriendRequest(id)
+      } else if (action === "reject" && id) {
+        await rejectFriendRequest(id)
+      } else if (action === "remove" && id) {
+        await removeFriendship(id)
+      }
+
+      // Atualização otimista da contagem de amigos (aceitar +1 / remover -1).
+      if (action === "accept") {
+        setProfile((p) => (p ? { ...p, friendCount: p.friendCount + 1 } : p))
+      } else if (action === "remove") {
+        setProfile((p) =>
+          p ? { ...p, friendCount: Math.max(0, p.friendCount - 1) } : p
+        )
+      }
+
+      const [friends, pending, sent] = await Promise.all([
+        getFriends(),
+        getPendingRequests(),
+        getSentRequests(),
+      ])
+      setFriendState(deriveFriendState(friends, pending, sent, profile.id))
+
+      const common = await getFriendsInCommon(profile.id).catch(() => [])
+      setCommonFriends(common)
+    } catch (err) {
+      setActionError(getErrorMessage(err, "Erro. Tente novamente."))
+    } finally {
+      setActionLoading(false)
+    }
+  }
+
   const interests: Array<{ label: string; items: string[] }> = [
     { label: "Música", items: profile?.musicInterests ?? [] },
     { label: "Filmes", items: profile?.movieInterests ?? [] },
@@ -75,130 +228,301 @@ export default function ProfilePage() {
     { label: "Hobbies", items: profile?.hobbies ?? [] },
   ].filter((section) => section.items.length > 0)
 
-  const age = profile?.age ?? null
   const relationship = relationshipStatusLabel(profile?.relationshipStatus)
+
+  const tabs: Array<{ key: TabKey; label: string }> = [
+    { key: "publicacoes", label: "Publicações" },
+    { key: "sobre", label: "Sobre" },
+    { key: "comunidades", label: "Comunidades" },
+    { key: "conexoes", label: "Conexões" },
+  ]
 
   return (
     <div className="min-h-svh">
       <Navbar />
 
-      <div className="mx-auto max-w-2xl space-y-6 p-6">
-        {loading ? (
-          <div className="py-12 text-center">
+      <main className="shell">
+        {loading || authLoading ? (
+          <div className="py-16 text-center">
             <p className="text-muted-foreground">Carregando...</p>
           </div>
         ) : notFound ? (
-          <div className="rounded-md border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
-            Usuário não encontrado.
+          <div className="empty-state mt-8">
+            <div className="eyebrow">perfil</div>
+            <h2>Usuário não encontrado</h2>
+            <p>Este perfil não existe ou foi desativado.</p>
           </div>
         ) : error ? (
-          <div className="rounded-md border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
-            {error}
+          <div className="empty-state mt-8">
+            <div className="eyebrow">perfil</div>
+            <h2>Não foi possível carregar</h2>
+            <p>{error}</p>
           </div>
         ) : profile ? (
           <>
-            <Card>
-              <CardHeader>
-                <div className="flex flex-col items-center gap-4 sm:flex-row sm:items-center">
-                  <Avatar className="size-24">
-                    {profile.profilePicture ? (
-                      <AvatarImage
-                        src={profile.profilePicture}
-                        alt={profile.name}
-                      />
-                    ) : (
-                      <AvatarFallback className="text-2xl">
-                        {getInitials(profile.name)}
-                      </AvatarFallback>
-                    )}
-                  </Avatar>
+            <section className="profile-hero">
+              <div className="profile-photo" aria-label={`Avatar de ${profile.name}`}>
+                {profile.profilePicture ? (
+                  <img src={profile.profilePicture} alt={profile.name} />
+                ) : (
+                  getInitials(profile.name)
+                )}
+              </div>
 
-                  <div className="text-center sm:text-left">
-                    <CardTitle className="text-2xl">{profile.name}</CardTitle>
-                    <p className="text-muted-foreground">@{profile.username}</p>
-                    {profile.bio && (
-                      <p className="mt-2 text-sm text-foreground">
-                        {profile.bio}
+              <div className="profile-intro">
+                <div className="eyebrow">
+                  {memberSince(profile.createdAt)
+                    ? `membro desde ${memberSince(profile.createdAt)}`
+                    : "conexão"}
+                </div>
+                <h1>{profile.name}</h1>
+                <div className="handle">
+                  @{profile.username}
+                  {profile.city || profile.state
+                    ? ` · ${[profile.city, profile.state].filter(Boolean).join(", ")}`
+                    : ""}
+                </div>
+                <div className="stats">
+                  <div className="stat">
+                    <strong>{profile.friendCount}</strong>
+                    <span>{profile.friendCount === 1 ? "amigo" : "amigos"}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="hero-actions">
+                {isSelf ? (
+                  <Link to="/me" className="btn primary">
+                    Editar perfil
+                  </Link>
+                ) : friendState?.kind === "none" ? (
+                  <button
+                    type="button"
+                    className="btn primary"
+                    onClick={() => handleFriendAction("send")}
+                    disabled={actionLoading}
+                  >
+                    {actionLoading ? "..." : "Adicionar amigo"}
+                  </button>
+                ) : friendState?.kind === "sent" ? (
+                  <button type="button" className="btn" disabled>
+                    Pendente
+                  </button>
+                ) : friendState?.kind === "received" ? (
+                  <>
+                    <button
+                      type="button"
+                      className="btn"
+                      onClick={() => handleFriendAction("reject", friendState.id)}
+                      disabled={actionLoading}
+                    >
+                      Recusar
+                    </button>
+                    <button
+                      type="button"
+                      className="btn primary"
+                      onClick={() => handleFriendAction("accept", friendState.id)}
+                      disabled={actionLoading}
+                    >
+                      Aceitar
+                    </button>
+                  </>
+                ) : friendState?.kind === "friends" ? (
+                  <>
+                    <button type="button" className="btn" disabled>
+                      Amigos ✓
+                    </button>
+                    <button
+                      type="button"
+                      className="btn danger"
+                      onClick={() => handleFriendAction("remove", friendState.id)}
+                      disabled={actionLoading}
+                    >
+                      Remover
+                    </button>
+                  </>
+                ) : null}
+              </div>
+
+              {profile.bio && <p className="bio">{profile.bio}</p>}
+            </section>
+
+            {actionError && (
+              <div className="mb-4 rounded-md border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+                {actionError}
+              </div>
+            )}
+
+            <nav className="profile-nav" aria-label="Seções do perfil">
+              {tabs.map((t) => (
+                <button
+                  key={t.key}
+                  type="button"
+                  className={`tab${tab === t.key ? " active" : ""}`}
+                  onClick={() => setTab(t.key)}
+                >
+                  {t.label}
+                </button>
+              ))}
+            </nav>
+
+            <div className="layout">
+              <section className="main-column">
+                {tab === "publicacoes" && (
+                  <div className="empty-state">
+                    <div className="eyebrow">publicações</div>
+                    <h2>Em breve</h2>
+                    <p>
+                      Este espaço vai reunir o que {firstName(profile.name)}{" "}
+                      compartilha.
+                    </p>
+                  </div>
+                )}
+
+                {tab === "sobre" &&
+                  (interests.length > 0 ? (
+                    <div className="space-y-6">
+                      {interests.map((section) => (
+                        <div key={section.label}>
+                          <div className="section-title">{section.label}</div>
+                          <div className="flex flex-wrap gap-1.5">
+                            {section.items.map((item) => (
+                              <span key={item} className="chip">
+                                {item}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="empty-state">
+                      <div className="eyebrow">sobre</div>
+                      <h2>Nada por aqui ainda</h2>
+                      <p>
+                        {firstName(profile.name)} ainda não adicionou interesses
+                        ao perfil.
+                      </p>
+                    </div>
+                  ))}
+
+                {tab === "comunidades" && (
+                  <div className="empty-state">
+                    <div className="eyebrow">comunidades</div>
+                    <h2>Em breve</h2>
+                    <p>
+                      As comunidades de {firstName(profile.name)} aparecerão
+                      aqui.
+                    </p>
+                  </div>
+                )}
+
+                {tab === "conexoes" && (
+                  <div className="empty-state">
+                    <div className="eyebrow">conexões</div>
+                    <h2>Em breve</h2>
+                    <p>
+                      {isSelf
+                        ? "Gerencie suas conexões na página de amigos."
+                        : "Veja os amigos em comum na barra lateral."}
+                    </p>
+                  </div>
+                )}
+              </section>
+
+              <aside className="side-stack">
+                <section className="side-card">
+                  <h2>Sobre {firstName(profile.name)}</h2>
+                  <div className="detail-list">
+                    {(profile.city || profile.state) && (
+                      <div className="detail">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7">
+                          <path d="M12 21s7-6.2 7-12A7 7 0 0 0 5 9c0 5.8 7 12 7 12Z" />
+                          <circle cx="12" cy="9" r="2.2" />
+                        </svg>
+                        <span>
+                          <strong>
+                            {[profile.city, profile.state].filter(Boolean).join(", ")}
+                          </strong>
+                          <br />
+                          Localização
+                        </span>
+                      </div>
+                    )}
+                    {profile.age != null && (
+                      <div className="detail">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7">
+                          <rect x="3" y="5" width="18" height="16" rx="2" />
+                          <path d="M8 3v4M16 3v4M3 10h18" />
+                        </svg>
+                        <span>
+                          <strong>{profile.age} anos</strong>
+                          <br />
+                          Idade
+                        </span>
+                      </div>
+                    )}
+                    {relationship && (
+                      <div className="detail">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7">
+                          <path d="M12 21s-7-4.35-9.5-8.5C.5 8 2 5 5.5 5 8 5 10 7 12 9c2-2 4-4 6.5-4C22 5 23.5 8 21.5 12.5 19 16.65 12 21 12 21Z" />
+                        </svg>
+                        <span>
+                          <strong>{relationship}</strong>
+                          <br />
+                          Relacionamento
+                        </span>
+                      </div>
+                    )}
+                    {!profile.city && !profile.state && profile.age == null && !relationship && (
+                      <p className="text-muted-foreground">
+                        Nenhuma informação adicional.
                       </p>
                     )}
                   </div>
-                </div>
-              </CardHeader>
-            </Card>
+                </section>
 
-            <Card>
-              <CardHeader>
-                <CardTitle>Sobre</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <dl className="space-y-2 text-sm">
-                  {(profile.city || profile.state) && (
-                    <div className="flex gap-2">
-                      <dt className="text-muted-foreground">Localização:</dt>
-                      <dd>
-                        {[profile.city, profile.state]
-                          .filter(Boolean)
-                          .join(", ")}
-                      </dd>
-                    </div>
-                  )}
-                  {age != null && (
-                    <div className="flex gap-2">
-                      <dt className="text-muted-foreground">Idade:</dt>
-                      <dd>{age} anos</dd>
-                    </div>
-                  )}
-                  {relationship && (
-                    <div className="flex gap-2">
-                      <dt className="text-muted-foreground">Relacionamento:</dt>
-                      <dd>{relationship}</dd>
-                    </div>
-                  )}
-                </dl>
-              </CardContent>
-            </Card>
-
-            {interests.length > 0 && (
-              <Card>
-                <CardHeader>
-                  <CardTitle>Interesses</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {interests.map((section) => (
-                    <div key={section.label}>
-                      <h3 className="mb-2 text-sm font-medium text-muted-foreground">
-                        {section.label}
-                      </h3>
-                      <div className="flex flex-wrap gap-1.5">
-                        {section.items.map((item) => (
-                          <span
-                            key={item}
-                            className="rounded-full bg-muted px-2 py-0.5 text-sm"
+                {!isSelf && (
+                  <section className="side-card">
+                    <h2>
+                      Amigos em comum{" "}
+                      <span style={{ color: "var(--muted-foreground)", fontWeight: 400 }}>
+                        · {commonFriends.length}
+                      </span>
+                    </h2>
+                    {commonFriends.length > 0 ? (
+                      <div className="friend-list">
+                        {commonFriends.map((friend) => (
+                          <Link
+                            key={friend.id}
+                            to={`/u/${friend.username}`}
+                            className="friend"
                           >
-                            {item}
-                          </span>
+                            <MiniAvatar
+                              name={friend.name}
+                              picture={friend.profilePicture}
+                            />
+                            <div className="friend-info">
+                              <span className="friend-name">{friend.name}</span>
+                              <span className="friend-role">
+                                @{friend.username}
+                              </span>
+                            </div>
+                          </Link>
                         ))}
                       </div>
-                    </div>
-                  ))}
-                </CardContent>
-              </Card>
-            )}
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Resumo social</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm">
-                  <span className="font-medium">{profile.friendCount}</span>{" "}
-                  {profile.friendCount === 1 ? "amigo" : "amigos"}
-                </p>
-              </CardContent>
-            </Card>
+                    ) : (
+                      <p className="text-sm text-muted-foreground">
+                        Nenhum amigo em comum.
+                      </p>
+                    )}
+                  </section>
+                )}
+              </aside>
+            </div>
           </>
         ) : null}
-      </div>
+      </main>
     </div>
   )
 }

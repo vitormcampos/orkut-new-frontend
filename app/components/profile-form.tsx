@@ -12,7 +12,7 @@ import { Field, FieldGroup, FieldLabel } from "~/components/ui/field"
 import { Input } from "~/components/ui/input"
 import { TagInput } from "~/components/tag-input"
 import { useAuth } from "~/lib/auth-context"
-import { ApiError } from "~/lib/api/client"
+import { getErrorMessage } from "~/lib/api/client"
 import { RELATIONSHIP_STATUS_OPTIONS } from "~/lib/relationship-status"
 import type { UpdateProfileRequest } from "~/lib/api/types"
 
@@ -101,14 +101,10 @@ export function ProfileForm({
       setMessage({ type: "success", text: "Foto atualizada com sucesso." })
     } catch (err) {
       setPreview(null)
-      if (err instanceof ApiError) {
-        setMessage({ type: "error", text: err.message })
-      } else {
-        setMessage({
-          type: "error",
-          text: "Erro ao enviar foto. Tente novamente.",
-        })
-      }
+      setMessage({
+        type: "error",
+        text: getErrorMessage(err, "Erro ao enviar foto. Tente novamente."),
+      })
     } finally {
       setUploading(false)
       if (fileInputRef.current) fileInputRef.current.value = ""
@@ -137,14 +133,10 @@ export function ProfileForm({
       await updateProfile(body)
       setMessage({ type: "success", text: "Perfil atualizado com sucesso." })
     } catch (err) {
-      if (err instanceof ApiError) {
-        setMessage({ type: "error", text: err.message })
-      } else {
-        setMessage({
-          type: "error",
-          text: "Erro ao salvar perfil. Tente novamente.",
-        })
-      }
+      setMessage({
+        type: "error",
+        text: getErrorMessage(err, "Erro ao salvar perfil. Tente novamente."),
+      })
     } finally {
       setSaving(false)
     }
@@ -165,14 +157,10 @@ export function ProfileForm({
       await deleteAccount()
       window.location.href = "/"
     } catch (err) {
-      if (err instanceof ApiError) {
-        setMessage({ type: "error", text: err.message })
-      } else {
-        setMessage({
-          type: "error",
-          text: "Erro ao desativar conta. Tente novamente.",
-        })
-      }
+      setMessage({
+        type: "error",
+        text: getErrorMessage(err, "Erro ao desativar conta. Tente novamente."),
+      })
     } finally {
       setDeleting(false)
     }
@@ -251,7 +239,7 @@ export function ProfileForm({
           </div>
 
           <div>
-            <h1 className="text-2xl font-semibold">{user.name}</h1>
+            <h1 className="font-display text-2xl tracking-tight">{user.name}</h1>
             <p className="text-muted-foreground">@{user.username}</p>
             <p className="text-sm text-muted-foreground">{user.email}</p>
           </div>

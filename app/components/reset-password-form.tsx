@@ -16,7 +16,7 @@ import {
 } from "~/components/ui/field"
 import { Input } from "~/components/ui/input"
 import { resetPassword } from "~/lib/api/auth"
-import { ApiError } from "~/lib/api/client"
+import { getErrorMessage } from "~/lib/api/client"
 
 export function ResetPasswordForm({
   className,
@@ -57,11 +57,7 @@ export function ResetPasswordForm({
       await resetPassword({ token, newPassword })
       setSuccess(true)
     } catch (err) {
-      if (err instanceof ApiError) {
-        setError(err.message)
-      } else {
-        setError("Ocorreu um erro inesperado. Tente novamente.")
-      }
+      setError(getErrorMessage(err))
     } finally {
       setLoading(false)
     }

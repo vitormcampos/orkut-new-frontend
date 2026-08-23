@@ -5,7 +5,7 @@ import { Field, FieldError, FieldLabel } from "~/components/ui/field"
 import { Input } from "~/components/ui/input"
 import { cn } from "~/lib/utils"
 import { register } from "~/lib/api/auth"
-import { ApiError } from "~/lib/api/client"
+import { getErrorMessage } from "~/lib/api/client"
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const USERNAME_RE = /^[a-zA-Z0-9._-]{3,}$/
@@ -56,11 +56,7 @@ export function RegisterForm({
       await register({ name, email, username, password })
       navigate("/login")
     } catch (err) {
-      setError(
-        err instanceof ApiError
-          ? err.message
-          : "Ocorreu um erro inesperado. Tente novamente."
-      )
+      setError(getErrorMessage(err))
     } finally {
       setLoading(false)
     }
