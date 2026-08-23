@@ -1,4 +1,8 @@
+import { useState } from "react"
+import type { FormEvent } from "react"
 import { Link, useNavigate } from "react-router"
+import { Search } from "lucide-react"
+import { Input } from "~/components/ui/input"
 import { useAuth } from "~/lib/auth-context"
 
 function getInitials(name: string): string {
@@ -13,6 +17,13 @@ function getInitials(name: string): string {
 export function Navbar() {
   const navigate = useNavigate()
   const { user, loading, logout } = useAuth()
+  const [searchTerm, setSearchTerm] = useState("")
+
+  function handleSearch(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+    const term = searchTerm.trim()
+    if (term) navigate(`/search?term=${encodeURIComponent(term)}`)
+  }
 
   async function handleLogout() {
     await logout()
@@ -30,10 +41,31 @@ export function Navbar() {
           <nav className="header-nav">
             <Link to="/">Início</Link>
             <Link to="/friends">Amigos</Link>
+            <Link to="/communities">Comunidades</Link>
           </nav>
         </div>
 
         <div className="header-actions">
+          <form role="search" onSubmit={handleSearch} className="relative">
+            <label htmlFor="navbar-search" className="sr-only">
+              Buscar pessoas e comunidades
+            </label>
+            <Input
+              id="navbar-search"
+              value={searchTerm}
+              onChange={(event) => setSearchTerm(event.target.value)}
+              placeholder="Buscar"
+              className="h-8 w-28 rounded-full pr-8 text-xs sm:w-40"
+              maxLength={100}
+            />
+            <button
+              type="submit"
+              aria-label="Buscar"
+              className="absolute top-1/2 right-2 -translate-y-1/2 text-muted-foreground transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+            >
+              <Search className="size-4" aria-hidden="true" />
+            </button>
+          </form>
           {loading ? null : user ? (
             <>
               <Link
@@ -48,7 +80,11 @@ export function Navbar() {
                 aria-label="Abrir meu perfil"
                 style={
                   user.profilePicture
-                    ? { backgroundImage: `url(${user.profilePicture})`, backgroundSize: "cover", backgroundPosition: "center" }
+                    ? {
+                        backgroundImage: `url(${user.profilePicture})`,
+                        backgroundSize: "cover",
+                        backgroundPosition: "center",
+                      }
                     : undefined
                 }
               >

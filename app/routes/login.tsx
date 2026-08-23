@@ -41,7 +41,7 @@ export default function LoginPage() {
 
       <main className="mx-auto grid w-full max-w-[1080px] grid-cols-1 items-center gap-x-[clamp(52px,9vw,132px)] gap-y-12 px-4 py-10 sm:px-6 sm:py-[78px] lg:grid-cols-[minmax(0,1fr)_minmax(370px,470px)]">
         <section className="max-w-[470px]">
-          <p className="font-mono text-xs uppercase tracking-[0.08em] text-muted-foreground">
+          <p className="font-mono text-xs tracking-[0.08em] text-muted-foreground uppercase">
             bom ter você de volta
           </p>
           <h1 className="mt-2.5 max-w-[10ch] font-display text-display font-semibold lg:max-w-[8ch]">
@@ -63,14 +63,14 @@ export default function LoginPage() {
               <br />
               As conexões e interesses que você construiu esperam por você.
             </p>
-            <div className="absolute left-0 top-[116px] h-px w-[78%] origin-left -rotate-[13deg] bg-primary/25 after:absolute after:left-[16%] after:top-[30px] after:h-px after:w-full after:rotate-[25deg] after:bg-primary/15" />
-            <span className="absolute left-[7%] top-[88px] grid size-[42px] place-items-center rounded-full bg-[oklch(70%_0.1_185)] text-[11px] font-semibold text-white ring-[6px] ring-background">
+            <div className="absolute top-[116px] left-0 h-px w-[78%] origin-left -rotate-[13deg] bg-primary/25 after:absolute after:top-[30px] after:left-[16%] after:h-px after:w-full after:rotate-[25deg] after:bg-primary/15" />
+            <span className="absolute top-[88px] left-[7%] grid size-[42px] place-items-center rounded-full bg-[oklch(70%_0.1_185)] text-[11px] font-semibold text-white ring-[6px] ring-background">
               RF
             </span>
-            <span className="absolute left-[44%] top-[120px] grid size-[42px] place-items-center rounded-full bg-[oklch(68%_0.1_32)] text-[11px] font-semibold text-white ring-[6px] ring-background">
+            <span className="absolute top-[120px] left-[44%] grid size-[42px] place-items-center rounded-full bg-[oklch(68%_0.1_32)] text-[11px] font-semibold text-white ring-[6px] ring-background">
               BL
             </span>
-            <span className="absolute right-[9%] top-[70px] grid size-[42px] place-items-center rounded-full bg-[oklch(62%_0.12_300)] text-[11px] font-semibold text-white ring-[6px] ring-background">
+            <span className="absolute top-[70px] right-[9%] grid size-[42px] place-items-center rounded-full bg-[oklch(62%_0.12_300)] text-[11px] font-semibold text-white ring-[6px] ring-background">
               GS
             </span>
           </div>

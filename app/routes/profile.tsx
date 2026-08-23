@@ -17,10 +17,7 @@ import {
   sendFriendRequest,
 } from "~/lib/api/friendship"
 import { relationshipStatusLabel } from "~/lib/relationship-status"
-import type {
-  FriendshipDto,
-  UserSummaryDto,
-} from "~/lib/api/types"
+import type { FriendshipDto, UserSummaryDto } from "~/lib/api/types"
 
 export function meta({}: Route.MetaArgs) {
   return [{ title: "Perfil | newkut" }]
@@ -81,7 +78,13 @@ const AVATAR_GRADIENTS = [
   "linear-gradient(135deg, oklch(76% .11 28), oklch(59% .13 349))",
 ]
 
-function MiniAvatar({ name, picture }: { name: string; picture?: string | null }) {
+function MiniAvatar({
+  name,
+  picture,
+}: {
+  name: string
+  picture?: string | null
+}) {
   const idx = (name.length ?? 0) % AVATAR_GRADIENTS.length
   if (picture) {
     return (
@@ -162,7 +165,8 @@ export default function ProfilePage() {
           getPendingRequests(),
           getSentRequests(),
         ])
-        if (!cancelled) setFriendState(deriveFriendState(friends, pending, sent, profileId))
+        if (!cancelled)
+          setFriendState(deriveFriendState(friends, pending, sent, profileId))
       } catch {
         if (!cancelled) setFriendState(null)
       }
@@ -181,7 +185,10 @@ export default function ProfilePage() {
     }
   }, [profile, me])
 
-  async function handleFriendAction(action: "send" | "accept" | "reject" | "remove", id?: string) {
+  async function handleFriendAction(
+    action: "send" | "accept" | "reject" | "remove",
+    id?: string
+  ) {
     if (!profile) return
     setActionLoading(true)
     setActionError(null)
@@ -261,7 +268,10 @@ export default function ProfilePage() {
         ) : profile ? (
           <>
             <section className="profile-hero">
-              <div className="profile-photo" aria-label={`Avatar de ${profile.name}`}>
+              <div
+                className="profile-photo"
+                aria-label={`Avatar de ${profile.name}`}
+              >
                 {profile.profilePicture ? (
                   <img src={profile.profilePicture} alt={profile.name} />
                 ) : (
@@ -285,7 +295,9 @@ export default function ProfilePage() {
                 <div className="stats">
                   <div className="stat">
                     <strong>{profile.friendCount}</strong>
-                    <span>{profile.friendCount === 1 ? "amigo" : "amigos"}</span>
+                    <span>
+                      {profile.friendCount === 1 ? "amigo" : "amigos"}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -313,7 +325,9 @@ export default function ProfilePage() {
                     <button
                       type="button"
                       className="btn"
-                      onClick={() => handleFriendAction("reject", friendState.id)}
+                      onClick={() =>
+                        handleFriendAction("reject", friendState.id)
+                      }
                       disabled={actionLoading}
                     >
                       Recusar
@@ -321,7 +335,9 @@ export default function ProfilePage() {
                     <button
                       type="button"
                       className="btn primary"
-                      onClick={() => handleFriendAction("accept", friendState.id)}
+                      onClick={() =>
+                        handleFriendAction("accept", friendState.id)
+                      }
                       disabled={actionLoading}
                     >
                       Aceitar
@@ -335,7 +351,9 @@ export default function ProfilePage() {
                     <button
                       type="button"
                       className="btn danger"
-                      onClick={() => handleFriendAction("remove", friendState.id)}
+                      onClick={() =>
+                        handleFriendAction("remove", friendState.id)
+                      }
                       disabled={actionLoading}
                     >
                       Remover
@@ -358,7 +376,7 @@ export default function ProfilePage() {
                 <button
                   key={t.key}
                   type="button"
-                  className={`tab${tab === t.key ? " active" : ""}`}
+                  className={`tab ${tab === t.key ? "active" : ""}`}
                   onClick={() => setTab(t.key)}
                 >
                   {t.label}
@@ -436,13 +454,22 @@ export default function ProfilePage() {
                   <div className="detail-list">
                     {(profile.city || profile.state) && (
                       <div className="detail">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7">
+                        <svg
+                          width="18"
+                          height="18"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="1.7"
+                        >
                           <path d="M12 21s7-6.2 7-12A7 7 0 0 0 5 9c0 5.8 7 12 7 12Z" />
                           <circle cx="12" cy="9" r="2.2" />
                         </svg>
                         <span>
                           <strong>
-                            {[profile.city, profile.state].filter(Boolean).join(", ")}
+                            {[profile.city, profile.state]
+                              .filter(Boolean)
+                              .join(", ")}
                           </strong>
                           <br />
                           Localização
@@ -451,7 +478,14 @@ export default function ProfilePage() {
                     )}
                     {profile.age != null && (
                       <div className="detail">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7">
+                        <svg
+                          width="18"
+                          height="18"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="1.7"
+                        >
                           <rect x="3" y="5" width="18" height="16" rx="2" />
                           <path d="M8 3v4M16 3v4M3 10h18" />
                         </svg>
@@ -464,7 +498,14 @@ export default function ProfilePage() {
                     )}
                     {relationship && (
                       <div className="detail">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7">
+                        <svg
+                          width="18"
+                          height="18"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="1.7"
+                        >
                           <path d="M12 21s-7-4.35-9.5-8.5C.5 8 2 5 5.5 5 8 5 10 7 12 9c2-2 4-4 6.5-4C22 5 23.5 8 21.5 12.5 19 16.65 12 21 12 21Z" />
                         </svg>
                         <span>
@@ -474,11 +515,14 @@ export default function ProfilePage() {
                         </span>
                       </div>
                     )}
-                    {!profile.city && !profile.state && profile.age == null && !relationship && (
-                      <p className="text-muted-foreground">
-                        Nenhuma informação adicional.
-                      </p>
-                    )}
+                    {!profile.city &&
+                      !profile.state &&
+                      profile.age == null &&
+                      !relationship && (
+                        <p className="text-muted-foreground">
+                          Nenhuma informação adicional.
+                        </p>
+                      )}
                   </div>
                 </section>
 
@@ -486,7 +530,12 @@ export default function ProfilePage() {
                   <section className="side-card">
                     <h2>
                       Amigos em comum{" "}
-                      <span style={{ color: "var(--muted-foreground)", fontWeight: 400 }}>
+                      <span
+                        style={{
+                          color: "var(--muted-foreground)",
+                          fontWeight: 400,
+                        }}
+                      >
                         · {commonFriends.length}
                       </span>
                     </h2>

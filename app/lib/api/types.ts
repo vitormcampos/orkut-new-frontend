@@ -95,6 +95,13 @@ export interface UserSummaryDto {
   profilePicture?: string | null
 }
 
+export interface UserSearchResultDto {
+  id: string
+  name: string
+  username: string
+  profilePicture?: string | null
+}
+
 export interface SendFriendshipRequest {
   addresseeUsername: string
 }
@@ -110,4 +117,45 @@ export interface FriendshipDto {
   status?: string | null
   requestedAt: string
   respondedAt?: string | null
+}
+
+export type MembershipRole = "Owner" | "Member" | "Moderator"
+
+export interface CommunityDto {
+  id: string
+  name: string
+  description?: string | null
+  photo?: string | null
+  ownerId: string
+  ownerName?: string | null
+  memberCount: number
+  createdAt: string
+  updatedAt?: string | null
+}
+
+export interface CommunitySearchResultDto {
+  id: string
+  name: string
+  description?: string | null
+  photo?: string | null
+  memberCount: number
+}
+
+export interface CommunityMemberDto {
+  communityId: string
+  userId: string
+  userName: string
+  userProfilePicture?: string | null
+  role: MembershipRole
+  joinedAt: string
+}
+
+export interface CreateCommunityRequest {
+  name: string
+  description?: string
+}
+
+export interface UpdateCommunityRequest {
+  name: string
+  description?: string
 }

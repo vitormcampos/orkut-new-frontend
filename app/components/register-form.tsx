@@ -71,7 +71,7 @@ export function RegisterForm({
       {...props}
     >
       <div className="mb-6">
-        <p className="font-mono text-xs uppercase tracking-[0.08em] text-muted-foreground">
+        <p className="font-mono text-xs tracking-[0.08em] text-muted-foreground uppercase">
           comece agora
         </p>
         <h2 className="mt-2 font-display text-[26px] leading-[1.1] font-semibold tracking-[-0.025em]">
@@ -147,7 +147,7 @@ export function RegisterForm({
               type="button"
               onClick={() => setShowPassword((v) => !v)}
               aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
-              className="absolute right-2 top-1.5 h-8 rounded-md px-2 text-xs text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+              className="absolute top-1.5 right-2 h-8 rounded-md px-2 text-xs text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
             >
               {showPassword ? "Ocultar" : "Mostrar"}
             </button>

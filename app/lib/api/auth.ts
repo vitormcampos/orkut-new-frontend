@@ -13,7 +13,8 @@ import type {
 
 // ─── Helpers ───────────────────────────────────────────
 
-const API_BASE = (import.meta.env.VITE_API_URL as string) ?? "http://localhost:5272/api/v1"
+const API_BASE =
+  (import.meta.env.VITE_API_URL as string) ?? "http://localhost:5272/api/v1"
 
 function serverBaseUrl(): string {
   return API_BASE.replace(/\/api\/v1\/?$/, "")
@@ -23,7 +24,10 @@ export function getProfilePictureUrl(
   profilePicture: string | null | undefined
 ): string | null {
   if (!profilePicture) return null
-  if (profilePicture.startsWith("http://") || profilePicture.startsWith("https://")) {
+  if (
+    profilePicture.startsWith("http://") ||
+    profilePicture.startsWith("https://")
+  ) {
     return profilePicture
   }
   if (profilePicture.startsWith("/")) {
@@ -79,7 +83,9 @@ export async function logout(): Promise<void> {
 
 // ─── Password Recovery ─────────────────────────────────
 
-export async function forgotPassword(body: ForgotPasswordRequest): Promise<void> {
+export async function forgotPassword(
+  body: ForgotPasswordRequest
+): Promise<void> {
   await api.post<void>("/PasswordRecovery/forgot", body)
 }
 
@@ -93,7 +99,9 @@ export async function getMe(): Promise<UserDto> {
   return api.get<UserDto>("/Users/me")
 }
 
-export async function updateProfile(body: UpdateProfileRequest): Promise<UserDto> {
+export async function updateProfile(
+  body: UpdateProfileRequest
+): Promise<UserDto> {
   return api.put<UserDto>("/Users/me", body)
 }
 

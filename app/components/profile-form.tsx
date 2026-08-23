@@ -239,7 +239,9 @@ export function ProfileForm({
           </div>
 
           <div>
-            <h1 className="font-display text-2xl tracking-tight">{user.name}</h1>
+            <h1 className="font-display text-2xl tracking-tight">
+              {user.name}
+            </h1>
             <p className="text-muted-foreground">@{user.username}</p>
             <p className="text-sm text-muted-foreground">{user.email}</p>
           </div>

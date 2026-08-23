@@ -64,7 +64,8 @@ export function useAsyncData<T>(
     setNotFound(false)
     if (resetOnFetch) setData(null)
 
-    fetcherRef.current()
+    fetcherRef
+      .current()
       .then((result) => {
         if (!cancelled) setData(result)
       })

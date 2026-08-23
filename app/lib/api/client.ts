@@ -90,7 +90,10 @@ export function getErrorMessage(
   return err instanceof ApiError ? err.message : fallback
 }
 
-async function request<T>(path: string, options: RequestOptions = {}): Promise<T> {
+async function request<T>(
+  path: string,
+  options: RequestOptions = {}
+): Promise<T> {
   const { method = "GET", body, headers = {} } = options
 
   const accessToken = tokenStore.getAccessToken()
@@ -107,7 +110,12 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
   const fetchOptions: RequestInit = {
     method,
     headers: requestHeaders,
-    body: body instanceof FormData ? body : body !== undefined ? JSON.stringify(body) : undefined,
+    body:
+      body instanceof FormData
+        ? body
+        : body !== undefined
+          ? JSON.stringify(body)
+          : undefined,
   }
 
   let response = await fetch(`${BASE_URL}${path}`, fetchOptions)

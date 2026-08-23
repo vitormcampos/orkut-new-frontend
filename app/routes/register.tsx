@@ -41,7 +41,7 @@ export default function RegisterPage() {
 
       <main className="mx-auto grid w-full max-w-[1080px] grid-cols-1 items-center gap-x-[clamp(52px,9vw,132px)] gap-y-12 px-4 py-10 sm:px-6 sm:py-[72px] lg:grid-cols-[minmax(0,1fr)_minmax(370px,470px)]">
         <section className="max-w-[470px]">
-          <p className="font-mono text-xs uppercase tracking-[0.08em] text-muted-foreground">
+          <p className="font-mono text-xs tracking-[0.08em] text-muted-foreground uppercase">
             um lugar para estar por perto
           </p>
           <h1 className="mt-2.5 max-w-[10ch] font-display text-display font-semibold lg:max-w-[8ch]">
@@ -56,17 +56,17 @@ export default function RegisterPage() {
             aria-hidden="true"
             className="relative mt-14 hidden h-[294px] overflow-hidden border-t md:block"
           >
-            <span className="absolute left-0 top-4 font-mono text-[11px] tracking-[0.06em] text-muted-foreground">
+            <span className="absolute top-4 left-0 font-mono text-[11px] tracking-[0.06em] text-muted-foreground">
               conexões que continuam
             </span>
-            <div className="absolute left-[16%] top-[74px] size-[250px] rounded-full border border-primary/25 before:absolute before:inset-[26px] before:rounded-full before:border before:border-primary/15 after:absolute after:inset-[52px] after:rounded-full after:border after:border-primary/15" />
-            <span className="absolute left-[8%] top-[128px] grid size-[46px] place-items-center rounded-full bg-[oklch(70%_0.1_185)] text-xs font-semibold text-white ring-[6px] ring-background">
+            <div className="absolute top-[74px] left-[16%] size-[250px] rounded-full border border-primary/25 before:absolute before:inset-[26px] before:rounded-full before:border before:border-primary/15 after:absolute after:inset-[52px] after:rounded-full after:border after:border-primary/15" />
+            <span className="absolute top-[128px] left-[8%] grid size-[46px] place-items-center rounded-full bg-[oklch(70%_0.1_185)] text-xs font-semibold text-white ring-[6px] ring-background">
               RF
             </span>
-            <span className="absolute left-[57%] top-[53px] grid size-[46px] place-items-center rounded-full bg-[oklch(68%_0.1_32)] text-xs font-semibold text-white ring-[6px] ring-background">
+            <span className="absolute top-[53px] left-[57%] grid size-[46px] place-items-center rounded-full bg-[oklch(68%_0.1_32)] text-xs font-semibold text-white ring-[6px] ring-background">
               BL
             </span>
-            <span className="absolute left-[78%] top-[190px] grid size-[46px] place-items-center rounded-full bg-[oklch(62%_0.12_300)] text-xs font-semibold text-white ring-[6px] ring-background">
+            <span className="absolute top-[190px] left-[78%] grid size-[46px] place-items-center rounded-full bg-[oklch(62%_0.12_300)] text-xs font-semibold text-white ring-[6px] ring-background">
               GS
             </span>
             <p className="absolute right-0 bottom-0 w-[145px] text-xs text-muted-foreground">

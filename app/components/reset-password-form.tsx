@@ -124,9 +124,7 @@ export function ResetPasswordForm({
                 <Button type="submit" disabled={loading} className="w-full">
                   {loading ? "Redefinindo..." : "Redefinir senha"}
                 </Button>
-                {error && (
-                  <p className="text-sm text-destructive">{error}</p>
-                )}
+                {error && <p className="text-sm text-destructive">{error}</p>}
                 <FieldDescription className="text-center">
                   <Link to="/login">Voltar para o login</Link>
                 </FieldDescription>

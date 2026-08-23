@@ -22,15 +22,11 @@ export async function sendFriendRequest(
   return api.post<FriendshipDto>("/Friendships/request", body)
 }
 
-export async function acceptFriendRequest(
-  id: string
-): Promise<FriendshipDto> {
+export async function acceptFriendRequest(id: string): Promise<FriendshipDto> {
   return api.post<FriendshipDto>(`/Friendships/${id}/accept`)
 }
 
-export async function rejectFriendRequest(
-  id: string
-): Promise<FriendshipDto> {
+export async function rejectFriendRequest(id: string): Promise<FriendshipDto> {
   return api.post<FriendshipDto>(`/Friendships/${id}/reject`)
 }
 

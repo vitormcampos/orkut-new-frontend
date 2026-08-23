@@ -27,14 +27,12 @@ export default function Home() {
             </div>
 
             <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl">
-              Bem-vindo ao{" "}
-              <span className="text-primary">newkut</span>
+              Bem-vindo ao <span className="text-primary">newkut</span>
             </h1>
 
             <p className="text-lg text-muted-foreground">
-              Uma nova versão da rede social que marcou uma geração.
-              Conecte-se com amigos, compartilhe momentos e faça parte
-              dessa comunidade.
+              Uma nova versão da rede social que marcou uma geração. Conecte-se
+              com amigos, compartilhe momentos e faça parte dessa comunidade.
             </p>
 
             <div className="flex items-center justify-center gap-4 pt-4">
@@ -131,8 +129,7 @@ export default function Home() {
               </div>
               <h3 className="font-semibold">Scraps</h3>
               <p className="text-sm text-muted-foreground">
-                Deixe recados no perfil dos seus amigos como nos velhos
-                tempos.
+                Deixe recados no perfil dos seus amigos como nos velhos tempos.
               </p>
             </div>
           </div>
