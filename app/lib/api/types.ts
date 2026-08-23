@@ -40,7 +40,15 @@ export interface ResetPasswordRequest {
 export interface UpdateProfileRequest {
   name?: string
   username?: string
-  bio?: string
+  bio?: string | null
+  birthDate?: string | null
+  city?: string | null
+  state?: string | null
+  relationshipStatus?: string | null
+  musicInterests?: string[] | null
+  movieInterests?: string[] | null
+  bookInterests?: string[] | null
+  hobbies?: string[] | null
 }
 
 export interface UserDto {
@@ -50,8 +58,41 @@ export interface UserDto {
   username?: string | null
   profilePicture?: string | null
   bio?: string | null
+  birthDate?: string | null
+  city?: string | null
+  state?: string | null
+  relationshipStatus?: string | null
+  musicInterests?: string[] | null
+  movieInterests?: string[] | null
+  bookInterests?: string[] | null
+  hobbies?: string[] | null
   isActive: boolean
   createdAt: string
+}
+
+export interface PublicProfileDto {
+  id: string
+  name: string
+  username: string
+  profilePicture?: string | null
+  bio?: string | null
+  age?: number | null
+  city?: string | null
+  state?: string | null
+  relationshipStatus?: string | null
+  musicInterests?: string[] | null
+  movieInterests?: string[] | null
+  bookInterests?: string[] | null
+  hobbies?: string[] | null
+  friendCount: number
+  createdAt: string
+}
+
+export interface UserSummaryDto {
+  id: string
+  name: string
+  username: string
+  profilePicture?: string | null
 }
 
 export interface SendFriendshipRequest {

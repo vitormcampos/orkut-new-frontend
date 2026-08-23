@@ -1,4 +1,4 @@
-import { useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { Button } from "~/components/ui/button"
 import {
   Card,
@@ -8,14 +8,13 @@ import {
   CardTitle,
 } from "~/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar"
-import {
-  Field,
-  FieldGroup,
-  FieldLabel,
-} from "~/components/ui/field"
+import { Field, FieldGroup, FieldLabel } from "~/components/ui/field"
 import { Input } from "~/components/ui/input"
+import { TagInput } from "~/components/tag-input"
 import { useAuth } from "~/lib/auth-context"
 import { ApiError } from "~/lib/api/client"
+import { RELATIONSHIP_STATUS_OPTIONS } from "~/lib/relationship-status"
+import type { UpdateProfileRequest } from "~/lib/api/types"
 
 function getInitials(name: string): string {
   return name
@@ -26,13 +25,20 @@ function getInitials(name: string): string {
     .toUpperCase()
 }
 
+function todayLocalISO(): string {
+  const now = new Date()
+  const yyyy = now.getFullYear()
+  const mm = String(now.getMonth() + 1).padStart(2, "0")
+  const dd = String(now.getDate()).padStart(2, "0")
+  return `${yyyy}-${mm}-${dd}`
+}
+
 export function ProfileForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
   const fileInputRef = useRef<HTMLInputElement>(null)
-  const { user, loading, updateProfile, uploadPhoto, deleteAccount } =
-    useAuth()
+  const { user, loading, updateProfile, uploadPhoto, deleteAccount } = useAuth()
 
   const [saving, setSaving] = useState(false)
   const [uploading, setUploading] = useState(false)
@@ -46,6 +52,36 @@ export function ProfileForm({
   const [name, setName] = useState(user?.name ?? "")
   const [username, setUsername] = useState(user?.username ?? "")
   const [bio, setBio] = useState(user?.bio ?? "")
+  const [birthDate, setBirthDate] = useState(user?.birthDate ?? "")
+  const [city, setCity] = useState(user?.city ?? "")
+  const [state, setState] = useState(user?.state ?? "")
+  const [relationshipStatus, setRelationshipStatus] = useState(
+    user?.relationshipStatus ?? ""
+  )
+  const [musicInterests, setMusicInterests] = useState<string[]>(
+    user?.musicInterests ?? []
+  )
+  const [movieInterests, setMovieInterests] = useState<string[]>(
+    user?.movieInterests ?? []
+  )
+  const [bookInterests, setBookInterests] = useState<string[]>(
+    user?.bookInterests ?? []
+  )
+  const [hobbies, setHobbies] = useState<string[]>(user?.hobbies ?? [])
+
+  useEffect(() => {
+    setName(user?.name ?? "")
+    setUsername(user?.username ?? "")
+    setBio(user?.bio ?? "")
+    setBirthDate(user?.birthDate ?? "")
+    setCity(user?.city ?? "")
+    setState(user?.state ?? "")
+    setRelationshipStatus(user?.relationshipStatus ?? "")
+    setMusicInterests(user?.musicInterests ?? [])
+    setMovieInterests(user?.movieInterests ?? [])
+    setBookInterests(user?.bookInterests ?? [])
+    setHobbies(user?.hobbies ?? [])
+  }, [user])
 
   function handleAvatarClick() {
     fileInputRef.current?.click()
@@ -85,7 +121,20 @@ export function ProfileForm({
     setSaving(true)
 
     try {
-      await updateProfile({ name, username, bio })
+      const body: UpdateProfileRequest = {
+        name,
+        username,
+        bio: bio || null,
+        birthDate: birthDate || null,
+        city: city || null,
+        state: state || null,
+        relationshipStatus: relationshipStatus || null,
+        musicInterests,
+        movieInterests,
+        bookInterests,
+        hobbies,
+      }
+      await updateProfile(body)
       setMessage({ type: "success", text: "Perfil atualizado com sucesso." })
     } catch (err) {
       if (err instanceof ApiError) {
@@ -240,9 +289,7 @@ export function ProfileForm({
                   />
                 </Field>
                 <Field>
-                  <FieldLabel htmlFor="username">
-                    Nome de usuário
-                  </FieldLabel>
+                  <FieldLabel htmlFor="username">Nome de usuário</FieldLabel>
                   <Input
                     id="username"
                     value={username}
@@ -260,6 +307,90 @@ export function ProfileForm({
                   />
                 </Field>
                 <Field>
+                  <FieldLabel htmlFor="birthDate">
+                    Data de nascimento
+                  </FieldLabel>
+                  <Input
+                    id="birthDate"
+                    type="date"
+                    value={birthDate}
+                    max={todayLocalISO()}
+                    onChange={(e) => setBirthDate(e.target.value)}
+                  />
+                </Field>
+                <Field>
+                  <FieldLabel htmlFor="city">Cidade</FieldLabel>
+                  <Input
+                    id="city"
+                    value={city}
+                    onChange={(e) => setCity(e.target.value)}
+                    placeholder="Sua cidade"
+                  />
+                </Field>
+                <Field>
+                  <FieldLabel htmlFor="state">Estado</FieldLabel>
+                  <Input
+                    id="state"
+                    value={state}
+                    onChange={(e) => setState(e.target.value)}
+                    placeholder="Seu estado"
+                  />
+                </Field>
+                <Field>
+                  <FieldLabel htmlFor="relationshipStatus">
+                    Status de relacionamento
+                  </FieldLabel>
+                  <select
+                    id="relationshipStatus"
+                    value={relationshipStatus}
+                    onChange={(e) => setRelationshipStatus(e.target.value)}
+                    className="h-9 w-full min-w-0 rounded-md border border-input bg-transparent px-2.5 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm dark:bg-input/30"
+                  >
+                    <option value="">Não informado</option>
+                    {RELATIONSHIP_STATUS_OPTIONS.map((option) => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </select>
+                </Field>
+                <Field>
+                  <FieldLabel htmlFor="musicInterests">Música</FieldLabel>
+                  <TagInput
+                    id="musicInterests"
+                    value={musicInterests}
+                    onChange={setMusicInterests}
+                    placeholder="Digite e pressione Enter para adicionar..."
+                  />
+                </Field>
+                <Field>
+                  <FieldLabel htmlFor="movieInterests">Filmes</FieldLabel>
+                  <TagInput
+                    id="movieInterests"
+                    value={movieInterests}
+                    onChange={setMovieInterests}
+                    placeholder="Digite e pressione Enter para adicionar..."
+                  />
+                </Field>
+                <Field>
+                  <FieldLabel htmlFor="bookInterests">Livros</FieldLabel>
+                  <TagInput
+                    id="bookInterests"
+                    value={bookInterests}
+                    onChange={setBookInterests}
+                    placeholder="Digite e pressione Enter para adicionar..."
+                  />
+                </Field>
+                <Field>
+                  <FieldLabel htmlFor="hobbies">Hobbies</FieldLabel>
+                  <TagInput
+                    id="hobbies"
+                    value={hobbies}
+                    onChange={setHobbies}
+                    placeholder="Digite e pressione Enter para adicionar..."
+                  />
+                </Field>
+                <Field>
                   <Button type="submit" disabled={saving}>
                     {saving ? "Salvando..." : "Salvar alterações"}
                   </Button>
@@ -271,12 +402,10 @@ export function ProfileForm({
 
         <Card className="border-destructive/30">
           <CardHeader>
-            <CardTitle className="text-destructive">
-              Desativar conta
-            </CardTitle>
+            <CardTitle className="text-destructive">Desativar conta</CardTitle>
             <CardDescription>
-              Ao desativar sua conta, ela ficará indisponível e você não
-              poderá mais acessá-la. Esta ação é irreversível.
+              Ao desativar sua conta, ela ficará indisponível e você não poderá
+              mais acessá-la. Esta ação é irreversível.
             </CardDescription>
           </CardHeader>
           <CardContent>

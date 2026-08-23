@@ -3,10 +3,10 @@ import { getProfilePictureUrl } from "./auth"
 import type {
   FriendshipDto,
   SendFriendshipRequest,
-  UserDto,
+  UserSummaryDto,
 } from "./types"
 
-function normalizeUsers(users: UserDto[]): UserDto[] {
+function normalizeUsers(users: UserSummaryDto[]): UserSummaryDto[] {
   return users.map((user) => {
     if (user.profilePicture) {
       const full = getProfilePictureUrl(user.profilePicture)
@@ -52,7 +52,9 @@ export async function getSentRequests(): Promise<FriendshipDto[]> {
 
 export async function getFriendsInCommon(
   userId: string
-): Promise<UserDto[]> {
-  const users = await api.get<UserDto[]>(`/Friendships/in-common/${userId}`)
+): Promise<UserSummaryDto[]> {
+  const users = await api.get<UserSummaryDto[]>(
+    `/Friendships/in-common/${userId}`
+  )
   return normalizeUsers(users)
 }

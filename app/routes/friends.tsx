@@ -11,11 +11,7 @@ import {
   CardHeader,
   CardTitle,
 } from "~/components/ui/card"
-import {
-  Field,
-  FieldGroup,
-  FieldLabel,
-} from "~/components/ui/field"
+import { Field, FieldGroup, FieldLabel } from "~/components/ui/field"
 import { Input } from "~/components/ui/input"
 import { useAuth } from "~/lib/auth-context"
 import { ApiError } from "~/lib/api/client"
@@ -36,9 +32,12 @@ export function meta({}: Route.MetaArgs) {
 
 type Tab = "amigos" | "pending" | "sent" | "add"
 
-function useFriendshipData<T>(
-  fetcher: () => Promise<T>
-): { data: T | null; loading: boolean; error: string | null; refresh: () => void } {
+function useFriendshipData<T>(fetcher: () => Promise<T>): {
+  data: T | null
+  loading: boolean
+  error: string | null
+  refresh: () => void
+} {
   const [data, setData] = useState<T | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -95,7 +94,7 @@ export default function FriendsPage() {
 
   async function handleAction(
     id: string,
-    action: (id: string) => Promise<any>,
+    action: (id: string) => Promise<unknown>,
     successMessage: string
   ) {
     setActionLoading(id)
@@ -195,6 +194,7 @@ export default function FriendsPage() {
             error={friends.error}
             items={friends.data}
             actionLoading={actionLoading}
+            currentUserId={user.id}
             onRemove={(id) =>
               handleAction(id, removeFriendship, "Amizade removida.")
             }
@@ -209,18 +209,10 @@ export default function FriendsPage() {
             items={pending.data}
             actionLoading={actionLoading}
             onAccept={(id) =>
-              handleAction(
-                id,
-                acceptFriendRequest,
-                "Solicitação aceita!"
-              )
+              handleAction(id, acceptFriendRequest, "Solicitação aceita!")
             }
             onReject={(id) =>
-              handleAction(
-                id,
-                rejectFriendRequest,
-                "Solicitação recusada."
-              )
+              handleAction(id, rejectFriendRequest, "Solicitação recusada.")
             }
           />
         )}
@@ -256,6 +248,7 @@ function FriendsTab({
   error,
   items,
   actionLoading,
+  currentUserId,
   onRemove,
   emptyMessage,
 }: {
@@ -263,19 +256,19 @@ function FriendsTab({
   error: string | null
   items: FriendshipDto[] | null
   actionLoading: string | null
+  currentUserId: string
   onRemove: (id: string) => void
   emptyMessage: string
 }) {
   if (loading) return <LoadingMessage />
   if (error) return <ErrorMessage message={error} />
-  if (!items || items.length === 0) return <EmptyMessage message={emptyMessage} />
+  if (!items || items.length === 0)
+    return <EmptyMessage message={emptyMessage} />
 
   return (
     <div className="space-y-3">
       {items.map((f) => {
-        const isCurrentUserRequester = f.requesterId === f.addresseeId
-          ? false
-          : true
+        const isCurrentUserRequester = f.requesterId === currentUserId
         const friendName = isCurrentUserRequester
           ? (f.addresseeName ?? "Usuário")
           : (f.requesterName ?? "Usuário")
@@ -288,6 +281,7 @@ function FriendsTab({
             key={f.id}
             name={friendName}
             username={friendUsername}
+            href={friendUsername ? `/u/${friendUsername}` : undefined}
           >
             <Button
               variant="outline"
@@ -367,7 +361,8 @@ function SentTab({
 }) {
   if (loading) return <LoadingMessage />
   if (error) return <ErrorMessage message={error} />
-  if (!items || items.length === 0) return <EmptyMessage message={emptyMessage} />
+  if (!items || items.length === 0)
+    return <EmptyMessage message={emptyMessage} />
 
   return (
     <div className="space-y-3">
