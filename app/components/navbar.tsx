@@ -27,9 +27,9 @@ export function Navbar() {
         <div className="flex items-center gap-6">
           <Link to="/" className="flex items-center gap-2 font-semibold">
             <span className="flex size-8 items-center justify-center rounded-full bg-primary text-sm font-bold text-primary-foreground">
-              O
+              n
             </span>
-            <span className="hidden text-lg sm:inline">Orkut New</span>
+            <span className="hidden text-lg sm:inline">newkut</span>
           </Link>
           <nav className="hidden items-center gap-4 text-sm md:flex">
             <Link

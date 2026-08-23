@@ -3,11 +3,11 @@ import { Navbar } from "~/components/navbar"
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "Orkut New — A rede social que marcou uma geração" },
+    { title: "newkut — A rede social que marcou uma geração" },
     {
       name: "description",
       content:
-        "Conecte-se com amigos, compartilhe momentos e faça parte da comunidade Orkut New.",
+        "Conecte-se com amigos, compartilhe momentos e faça parte da comunidade newkut.",
     },
   ]
 }
@@ -22,13 +22,13 @@ export default function Home() {
           <div className="mx-auto max-w-2xl space-y-6">
             <div className="mx-auto flex size-20 items-center justify-center rounded-2xl bg-primary">
               <span className="text-4xl font-bold text-primary-foreground">
-                O
+                n
               </span>
             </div>
 
             <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl">
               Bem-vindo ao{" "}
-              <span className="text-primary">Orkut New</span>
+              <span className="text-primary">newkut</span>
             </h1>
 
             <p className="text-lg text-muted-foreground">
@@ -141,7 +141,7 @@ export default function Home() {
         <footer className="border-t">
           <div className="container mx-auto flex items-center justify-center px-4 py-8">
             <p className="text-sm text-muted-foreground">
-              Orkut New &copy; {new Date().getFullYear()}
+              newkut &copy; {new Date().getFullYear()}
             </p>
           </div>
         </footer>

@@ -2,7 +2,7 @@ import type { Route } from "./+types/forgot-password"
 import { ForgotPasswordForm } from "~/components/forgot-password-form"
 
 export function meta({}: Route.MetaArgs) {
-  return [{ title: "Esqueceu sua senha? | Orkut New" }]
+  return [{ title: "Esqueceu sua senha? | newkut" }]
 }
 
 export default function ForgotPasswordPage() {

@@ -31,7 +31,7 @@ import {
 import type { FriendshipDto } from "~/lib/api/types"
 
 export function meta({}: Route.MetaArgs) {
-  return [{ title: "Amigos | Orkut New" }]
+  return [{ title: "Amigos | newkut" }]
 }
 
 type Tab = "amigos" | "pending" | "sent" | "add"

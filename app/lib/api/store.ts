@@ -1,5 +1,5 @@
-const ACCESS_TOKEN_KEY = "orkut_access_token"
-const REFRESH_TOKEN_KEY = "orkut_refresh_token"
+const ACCESS_TOKEN_KEY = "newkut_access_token"
+const REFRESH_TOKEN_KEY = "newkut_refresh_token"
 
 export const tokenStore = {
   getAccessToken(): string | null {

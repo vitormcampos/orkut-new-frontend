@@ -2,7 +2,7 @@ import type { Route } from "./+types/reset-password"
 import { ResetPasswordForm } from "~/components/reset-password-form"
 
 export function meta({}: Route.MetaArgs) {
-  return [{ title: "Redefinir senha | Orkut New" }]
+  return [{ title: "Redefinir senha | newkut" }]
 }
 
 export default function ResetPasswordPage() {

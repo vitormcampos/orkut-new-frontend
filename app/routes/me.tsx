@@ -3,7 +3,7 @@ import { Navbar } from "~/components/navbar"
 import { ProfileForm } from "~/components/profile-form"
 
 export function meta({}: Route.MetaArgs) {
-  return [{ title: "Meu perfil | Orkut New" }]
+  return [{ title: "Meu perfil | newkut" }]
 }
 
 export default function MePage() {

@@ -1,4 +1,4 @@
-# Orkut New — Frontend
+# newkut — Frontend
 
 **Stack**: React Router v7 (framework mode, SSR), React 19, Vite 8, Tailwind CSS v4, shadcn/ui (base-vega style), TypeScript v6.
 
@@ -62,7 +62,7 @@ app/
 
   export function meta({}: Route.MetaArgs) {
     return [
-      { title: "Page Title | Orkut New" },
+      { title: "Page Title | newkut" },
       { name: "description", content: "..." },
     ]
   }
