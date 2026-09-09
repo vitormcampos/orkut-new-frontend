@@ -100,6 +100,8 @@ export interface UserSearchResultDto {
   name: string
   username: string
   profilePicture?: string | null
+  bio?: string | null
+  createdAt: string
 }
 
 export interface SendFriendshipRequest {

@@ -16,6 +16,8 @@ import { Input } from "~/components/ui/input"
 import { useAuth } from "~/lib/auth-context"
 import { getErrorMessage } from "~/lib/api/client"
 import { useAsyncData } from "~/lib/use-async-data"
+import { getFriendDisplay } from "~/lib/friendship-utils"
+import { ApiError } from "~/lib/api/client"
 import {
   acceptFriendRequest,
   getFriends,
@@ -153,8 +155,8 @@ export default function FriendsPage() {
             loading={friends.loading}
             error={friends.error}
             items={friends.data}
-            actionLoading={actionLoading}
             currentUserId={user.id}
+            actionLoading={actionLoading}
             onRemove={(id) =>
               handleAction(id, removeFriendship, "Amizade removida.")
             }
@@ -228,13 +230,10 @@ function FriendsTab({
   return (
     <div className="space-y-3">
       {items.map((f) => {
-        const isCurrentUserRequester = f.requesterId === currentUserId
-        const friendName = isCurrentUserRequester
-          ? (f.addresseeName ?? "Usuário")
-          : (f.requesterName ?? "Usuário")
-        const friendUsername = isCurrentUserRequester
-          ? f.addresseeUsername
-          : f.requesterUsername
+        const { name: friendName, username: friendUsername } = getFriendDisplay(
+          f,
+          currentUserId
+        )
 
         return (
           <FriendCard
