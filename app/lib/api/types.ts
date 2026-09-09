@@ -121,6 +121,36 @@ export interface FriendshipDto {
   respondedAt?: string | null
 }
 
+export type ScrapVisibility = "Public" | "Private"
+
+export interface ScrapDto {
+  id: string
+  authorId: string
+  authorName: string
+  authorUsername: string
+  authorProfilePicture?: string | null
+  recipientId: string
+  recipientName: string
+  recipientUsername: string
+  content: string
+  visibility: ScrapVisibility
+  createdAt: string
+}
+
+export interface ScrapPageDto {
+  items: ScrapDto[]
+  page: number
+  pageSize: number
+  totalItems: number
+  hasNextPage: boolean
+}
+
+export interface CreateScrapRequest {
+  recipientId: string
+  content: string
+  visibility?: ScrapVisibility
+}
+
 export type MembershipRole = "Owner" | "Member" | "Moderator"
 
 export interface CommunityDto {

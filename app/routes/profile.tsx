@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import { Link, useParams } from "react-router"
 import type { Route } from "./+types/profile"
 import { Navbar } from "~/components/navbar"
+import { ScrapWall } from "~/components/scraps/scrap-wall"
 import { useAuth } from "~/lib/auth-context"
 import { ApiError, getErrorMessage } from "~/lib/api/client"
 import { useAsyncData } from "~/lib/use-async-data"
@@ -42,7 +43,7 @@ function firstName(name: string): string {
   return name.split(" ")[0]
 }
 
-type TabKey = "publicacoes" | "sobre" | "comunidades" | "conexoes"
+type TabKey = "publicacoes" | "scraps" | "sobre" | "comunidades" | "conexoes"
 
 type FriendState =
   | { kind: "none" }
@@ -239,6 +240,7 @@ export default function ProfilePage() {
 
   const tabs: Array<{ key: TabKey; label: string }> = [
     { key: "publicacoes", label: "Publicações" },
+    { key: "scraps", label: "Scraps" },
     { key: "sobre", label: "Sobre" },
     { key: "comunidades", label: "Comunidades" },
     { key: "conexoes", label: "Conexões" },
@@ -386,6 +388,8 @@ export default function ProfilePage() {
 
             <div className="layout">
               <section className="main-column">
+                {tab === "scraps" && profile && <ScrapWall profile={profile} />}
+
                 {tab === "publicacoes" && (
                   <div className="empty-state">
                     <div className="eyebrow">publicações</div>
