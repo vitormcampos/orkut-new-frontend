@@ -22,6 +22,15 @@ export async function getCommunity(id: string): Promise<CommunityDto> {
   return normalizeCommunity(await api.get<CommunityDto>(`/Communities/${id}`))
 }
 
+export async function getUserCommunities(
+  userId: string
+): Promise<CommunityDto[]> {
+  const communities = await api.get<CommunityDto[]>(
+    `/Communities/user/${userId}`
+  )
+  return communities.map(normalizeCommunity)
+}
+
 export async function getCommunityMembers(
   id: string
 ): Promise<CommunityMemberDto[]> {

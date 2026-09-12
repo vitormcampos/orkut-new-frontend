@@ -6,6 +6,18 @@ import type {
   UserSummaryDto,
 } from "./types"
 
+function normalizeFriendship(friendship: FriendshipDto): FriendshipDto {
+  return {
+    ...friendship,
+    requesterProfilePicture: getProfilePictureUrl(
+      friendship.requesterProfilePicture
+    ),
+    addresseeProfilePicture: getProfilePictureUrl(
+      friendship.addresseeProfilePicture
+    ),
+  }
+}
+
 function normalizeUsers(users: UserSummaryDto[]): UserSummaryDto[] {
   return users.map((user) => {
     if (user.profilePicture) {
@@ -35,15 +47,18 @@ export async function removeFriendship(id: string): Promise<void> {
 }
 
 export async function getFriends(): Promise<FriendshipDto[]> {
-  return api.get<FriendshipDto[]>("/Friendships")
+  const friendships = await api.get<FriendshipDto[]>("/Friendships")
+  return friendships.map(normalizeFriendship)
 }
 
 export async function getPendingRequests(): Promise<FriendshipDto[]> {
-  return api.get<FriendshipDto[]>("/Friendships/pending")
+  const friendships = await api.get<FriendshipDto[]>("/Friendships/pending")
+  return friendships.map(normalizeFriendship)
 }
 
 export async function getSentRequests(): Promise<FriendshipDto[]> {
-  return api.get<FriendshipDto[]>("/Friendships/sent")
+  const friendships = await api.get<FriendshipDto[]>("/Friendships/sent")
+  return friendships.map(normalizeFriendship)
 }
 
 export async function getFriendsInCommon(

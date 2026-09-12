@@ -1,36 +1,57 @@
 import { api } from "./client"
 import { getProfilePictureUrl } from "./auth"
-import type { CommunitySearchResultDto, UserSearchResultDto } from "./types"
+import type {
+  CommunitySearchResultDto,
+  SearchPageDto,
+  UserSearchResultDto,
+} from "./types"
 
-function searchPath(path: string, term: string, limit: number): string {
-  const params = new URLSearchParams({ term, limit: String(limit) })
+function searchPath(
+  path: string,
+  term: string,
+  page: number,
+  pageSize: number
+): string {
+  const params = new URLSearchParams({
+    term,
+    page: String(page),
+    pageSize: String(pageSize),
+  })
   return `${path}?${params.toString()}`
 }
 
 export async function searchUsers(
   term: string,
-  limit = 10
-): Promise<UserSearchResultDto[]> {
-  const users = await api.get<UserSearchResultDto[]>(
-    searchPath("/Users/search", term, limit)
+  page = 1,
+  pageSize = 10
+): Promise<SearchPageDto<UserSearchResultDto>> {
+  const result = await api.get<SearchPageDto<UserSearchResultDto>>(
+    searchPath("/Users/search", term, page, pageSize)
   )
 
-  return users.map((user) => ({
-    ...user,
-    profilePicture: getProfilePictureUrl(user.profilePicture),
-  }))
+  return {
+    ...result,
+    items: result.items.map((user) => ({
+      ...user,
+      profilePicture: getProfilePictureUrl(user.profilePicture),
+    })),
+  }
 }
 
 export async function searchCommunities(
   term: string,
-  limit = 10
-): Promise<CommunitySearchResultDto[]> {
-  const communities = await api.get<CommunitySearchResultDto[]>(
-    searchPath("/Communities/search", term, limit)
+  page = 1,
+  pageSize = 10
+): Promise<SearchPageDto<CommunitySearchResultDto>> {
+  const result = await api.get<SearchPageDto<CommunitySearchResultDto>>(
+    searchPath("/Communities/search", term, page, pageSize)
   )
 
-  return communities.map((community) => ({
-    ...community,
-    photo: getProfilePictureUrl(community.photo),
-  }))
+  return {
+    ...result,
+    items: result.items.map((community) => ({
+      ...community,
+      photo: getProfilePictureUrl(community.photo),
+    })),
+  }
 }

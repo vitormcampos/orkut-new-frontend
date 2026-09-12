@@ -2,6 +2,8 @@ import { useEffect, useState } from "react"
 import { Link, useParams } from "react-router"
 import type { Route } from "./+types/profile"
 import { Navbar } from "~/components/navbar"
+import { ProfileCommunities } from "~/components/communities/profile-communities"
+import { ProfileConnections } from "~/components/profile/profile-connections"
 import { ScrapWall } from "~/components/scraps/scrap-wall"
 import { useAuth } from "~/lib/auth-context"
 import { ApiError, getErrorMessage } from "~/lib/api/client"
@@ -428,28 +430,22 @@ export default function ProfilePage() {
                     </div>
                   ))}
 
-                {tab === "comunidades" && (
-                  <div className="empty-state">
-                    <div className="eyebrow">comunidades</div>
-                    <h2>Em breve</h2>
-                    <p>
-                      As comunidades de {firstName(profile.name)} aparecerão
-                      aqui.
-                    </p>
-                  </div>
+                {tab === "comunidades" && profile && (
+                  <ProfileCommunities profile={profile} />
                 )}
 
-                {tab === "conexoes" && (
-                  <div className="empty-state">
-                    <div className="eyebrow">conexões</div>
-                    <h2>Em breve</h2>
-                    <p>
-                      {isSelf
-                        ? "Gerencie suas conexões na página de amigos."
-                        : "Veja os amigos em comum na barra lateral."}
-                    </p>
-                  </div>
-                )}
+                {tab === "conexoes" &&
+                  (isSelf ? (
+                    <ProfileConnections userId={profile.id} />
+                  ) : (
+                    <div className="empty-state">
+                      <div className="eyebrow">conexões</div>
+                      <h2>Amigos em comum</h2>
+                      <p>
+                        Veja os amigos em comum na barra lateral.
+                      </p>
+                    </div>
+                  ))}
               </section>
 
               <aside className="side-stack">

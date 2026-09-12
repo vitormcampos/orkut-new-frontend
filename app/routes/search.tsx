@@ -1,3 +1,4 @@
+import { useState } from "react"
 import { Navbar } from "~/components/navbar"
 import { SearchResults } from "~/components/search/search-results"
 import { searchCommunities, searchUsers } from "~/lib/api/search"
@@ -26,9 +27,19 @@ export default function SearchPage() {
   const term = searchParams.get("term")?.trim() ?? ""
   const validTerm =
     term.length >= MIN_TERM_LENGTH && term.length <= MAX_TERM_LENGTH
+  const [loadingMore, setLoadingMore] = useState<"users" | "communities" | null>(null)
+  const [loadMoreError, setLoadMoreError] = useState<string | null>(null)
+
+  const emptyPage = {
+    items: [],
+    page: 1,
+    pageSize: 10,
+    totalItems: 0,
+    hasNextPage: false,
+  }
 
   const users = useAsyncData(
-    () => (user && validTerm ? searchUsers(term) : Promise.resolve([])),
+    () => (user && validTerm ? searchUsers(term) : Promise.resolve(emptyPage)),
     [term, validTerm, user],
     {
       resetOnFetch: true,
@@ -39,7 +50,7 @@ export default function SearchPage() {
     }
   )
   const communities = useAsyncData(
-    () => (user && validTerm ? searchCommunities(term) : Promise.resolve([])),
+    () => (user && validTerm ? searchCommunities(term) : Promise.resolve(emptyPage)),
     [term, validTerm, user],
     {
       resetOnFetch: true,
@@ -49,6 +60,61 @@ export default function SearchPage() {
       }),
     }
   )
+
+  async function loadMore(kind: "users" | "communities") {
+    const current = kind === "users" ? users.data : communities.data
+    if (!current?.hasNextPage || loadingMore) return
+
+    setLoadingMore(kind)
+    setLoadMoreError(null)
+    try {
+      if (kind === "users") {
+        const nextPage = await searchUsers(
+          term,
+          current.page + 1,
+          current.pageSize
+        )
+        users.setData((previous) =>
+          previous
+            ? {
+                ...nextPage,
+                items: [
+                  ...previous.items,
+                  ...nextPage.items.filter(
+                    (item) => !previous.items.some((old) => old.id === item.id)
+                  ),
+                ],
+              }
+            : nextPage
+        )
+      } else {
+        const nextPage = await searchCommunities(
+          term,
+          current.page + 1,
+          current.pageSize
+        )
+        communities.setData((previous) =>
+          previous
+            ? {
+                ...nextPage,
+                items: [
+                  ...previous.items,
+                  ...nextPage.items.filter(
+                    (item) => !previous.items.some((old) => old.id === item.id)
+                  ),
+                ],
+              }
+            : nextPage
+        )
+      }
+    } catch (error) {
+      setLoadMoreError(
+        getErrorMessage(error, "Não foi possível carregar mais resultados.")
+      )
+    } finally {
+      setLoadingMore(null)
+    }
+  }
 
   return (
     <div className="min-h-svh">
@@ -89,12 +155,17 @@ export default function SearchPage() {
               </p>
             </div>
             <SearchResults
-              users={users.data ?? []}
-              communities={communities.data ?? []}
+              users={users.data?.items ?? []}
+              communities={communities.data?.items ?? []}
               usersLoading={users.loading}
               communitiesLoading={communities.loading}
               usersError={users.error}
               communitiesError={communities.error}
+              usersHasNextPage={users.data?.hasNextPage ?? false}
+              communitiesHasNextPage={communities.data?.hasNextPage ?? false}
+              loadingMore={loadingMore}
+              loadMoreError={loadMoreError}
+              onLoadMore={loadMore}
             />
           </>
         )}

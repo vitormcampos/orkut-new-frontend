@@ -15,6 +15,11 @@ interface SearchResultsProps {
   communitiesLoading: boolean
   usersError: string | null
   communitiesError: string | null
+  usersHasNextPage: boolean
+  communitiesHasNextPage: boolean
+  loadingMore: "users" | "communities" | null
+  loadMoreError: string | null
+  onLoadMore: (kind: "users" | "communities") => void
 }
 
 function EmptyState({ label }: { label: string }) {
@@ -57,6 +62,10 @@ export function SearchResults(props: SearchResultsProps) {
   const isPeople = activeTab === "people"
   const loading = isPeople ? props.usersLoading : props.communitiesLoading
   const error = isPeople ? props.usersError : props.communitiesError
+  const hasNextPage = isPeople
+    ? props.usersHasNextPage
+    : props.communitiesHasNextPage
+  const isLoadingMore = props.loadingMore === (isPeople ? "users" : "communities")
 
   return (
     <section aria-label="Resultados da busca">
@@ -121,6 +130,24 @@ export function SearchResults(props: SearchResultsProps) {
           </div>
         ) : (
           <EmptyState label="Comunidades" />
+        )}
+
+        {props.loadMoreError && (
+          <p className="mt-4 rounded-lg border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+            {props.loadMoreError}
+          </p>
+        )}
+        {hasNextPage && (
+          <div className="mt-6 flex justify-center">
+            <button
+              type="button"
+              className="btn"
+              onClick={() => props.onLoadMore(isPeople ? "users" : "communities")}
+              disabled={props.loadingMore !== null}
+            >
+              {isLoadingMore ? "Carregando..." : "Carregar mais"}
+            </button>
+          </div>
         )}
       </div>
     </section>

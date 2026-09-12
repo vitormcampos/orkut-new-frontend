@@ -113,9 +113,11 @@ export interface FriendshipDto {
   requesterId: string
   requesterName?: string | null
   requesterUsername?: string | null
+  requesterProfilePicture?: string | null
   addresseeId: string
   addresseeName?: string | null
   addresseeUsername?: string | null
+  addresseeProfilePicture?: string | null
   status?: string | null
   requestedAt: string
   respondedAt?: string | null
@@ -163,6 +165,14 @@ export interface CommunityDto {
   memberCount: number
   createdAt: string
   updatedAt?: string | null
+}
+
+export interface SearchPageDto<T> {
+  items: T[]
+  page: number
+  pageSize: number
+  totalItems: number
+  hasNextPage: boolean
 }
 
 export interface CommunitySearchResultDto {
