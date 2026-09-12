@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from "react"
 import { Link } from "react-router"
 import { useAuth } from "~/lib/auth-context"
+import { getProfilePictureUrl } from "~/lib/api/auth"
 import { getErrorMessage } from "~/lib/api/client"
 import { createScrap, deleteScrap, getProfileScraps } from "~/lib/api/scrap"
 import { useAsyncData } from "~/lib/use-async-data"
@@ -47,14 +48,43 @@ export function ScrapWall({ profile }: { profile: PublicProfileDto }) {
     setSubmitting(true)
     setActionError(null)
     try {
-      await createScrap({
+      const createdScrap = await createScrap({
         recipientId: profile.id,
         content: content.trim(),
         visibility,
       })
       setContent("")
       setVisibility("Public")
-      refresh()
+      setData((current) =>
+        current
+          ? {
+              ...current,
+              items: [
+                {
+                  ...createdScrap,
+                  authorProfilePicture: getProfilePictureUrl(
+                    createdScrap.authorProfilePicture
+                  ),
+                },
+                ...current.items.filter((scrap) => scrap.id !== createdScrap.id),
+              ],
+              totalItems: current.totalItems + 1,
+            }
+          : {
+              items: [
+                {
+                  ...createdScrap,
+                  authorProfilePicture: getProfilePictureUrl(
+                    createdScrap.authorProfilePicture
+                  ),
+                },
+              ],
+              page: 1,
+              pageSize: 10,
+              totalItems: 1,
+              hasNextPage: false,
+            }
+      )
     } catch (err) {
       setActionError(getErrorMessage(err, "Não foi possível publicar o scrap."))
     } finally {
@@ -73,7 +103,13 @@ export function ScrapWall({ profile }: { profile: PublicProfileDto }) {
         current
           ? {
               ...nextPage,
-              items: [...current.items, ...nextPage.items],
+              items: [
+                ...current.items,
+                ...nextPage.items.filter(
+                  (nextScrap) =>
+                    !current.items.some((scrap) => scrap.id === nextScrap.id)
+                ),
+              ],
             }
           : nextPage
       )
@@ -119,7 +155,7 @@ export function ScrapWall({ profile }: { profile: PublicProfileDto }) {
         </p>
       </div>
 
-      {!isSelf && (
+      {me && !isSelf && (
         <form
           onSubmit={handleSubmit}
           className="space-y-3 rounded-xl border bg-card p-5"
@@ -240,14 +276,16 @@ export function ScrapWall({ profile }: { profile: PublicProfileDto }) {
             </article>
           ))}
           {data.hasNextPage && (
-            <button
-              type="button"
-              className="btn mx-auto"
-              onClick={handleLoadMore}
-              disabled={loadingMore}
-            >
-              {loadingMore ? "Carregando..." : "Carregar mais"}
-            </button>
+            <div className="flex justify-center">
+              <button
+                type="button"
+                className="btn"
+                onClick={handleLoadMore}
+                disabled={loadingMore}
+              >
+                {loadingMore ? "Carregando..." : "Carregar mais"}
+              </button>
+            </div>
           )}
         </div>
       ) : (
