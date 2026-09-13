@@ -189,6 +189,11 @@ export function ProfileForm({
   return (
     <div className={className} {...props}>
       <div className="mx-auto max-w-2xl space-y-6 p-6">
+        <div className="page-header profile-form-header">
+          <div className="eyebrow">seu perfil</div>
+          <h1>Meu perfil</h1>
+          <p>Atualize sua identidade e suas informações no newkut.</p>
+        </div>
         <div className="flex flex-col items-center gap-4 sm:flex-row sm:items-start">
           <div className="relative">
             <button
@@ -261,14 +266,14 @@ export function ProfileForm({
 
         <Card>
           <CardHeader>
-            <CardTitle>Editar perfil</CardTitle>
+            <CardTitle>Informações do perfil</CardTitle>
             <CardDescription>
-              Atualize suas informações de perfil
+              Mantenha seus dados e interesses atualizados.
             </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSaveProfile}>
-              <FieldGroup>
+              <FieldGroup className="profile-fields-grid">
                 <Field>
                   <FieldLabel htmlFor="name">Nome</FieldLabel>
                   <Input
@@ -380,7 +385,7 @@ export function ProfileForm({
                     placeholder="Digite e pressione Enter para adicionar..."
                   />
                 </Field>
-                <Field>
+                <Field className="profile-save-field">
                   <Button type="submit" disabled={saving}>
                     {saving ? "Salvando..." : "Salvar alterações"}
                   </Button>

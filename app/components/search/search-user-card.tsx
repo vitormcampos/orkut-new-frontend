@@ -6,7 +6,7 @@ export function SearchUserCard({ user }: { user: UserSearchResultDto }) {
   return (
     <Link
       to={`/u/${encodeURIComponent(user.username)}`}
-      className="flex items-center gap-3 rounded-xl border bg-card p-4 transition-colors hover:border-primary/50 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+      className="search-card group flex items-center gap-3 rounded-xl border bg-card p-5 transition-all hover:-translate-y-0.5 hover:border-primary/50 hover:shadow-card focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
     >
       <Avatar size="lg">
         <AvatarImage src={user.profilePicture ?? undefined} alt="" />

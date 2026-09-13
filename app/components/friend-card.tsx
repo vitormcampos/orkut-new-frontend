@@ -55,7 +55,7 @@ export function FriendCard({
   )
 
   return (
-    <div className="flex items-center gap-4 rounded-lg border p-4">
+    <div className="friend-card flex items-center gap-4 rounded-xl border bg-card p-4 transition-colors hover:border-border-strong">
       {href ? (
         <Link
           to={href}

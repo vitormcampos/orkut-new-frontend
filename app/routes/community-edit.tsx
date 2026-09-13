@@ -50,7 +50,7 @@ export default function CommunityEditPage() {
   return (
     <div className="min-h-svh">
       <Navbar />
-      <main className="shell max-w-2xl">
+      <main className="shell community-form-page max-w-2xl">
         {authLoading || result.loading ? (
           <CommunityLoading />
         ) : result.notFound ? (
@@ -71,19 +71,26 @@ export default function CommunityEditPage() {
             </Link>
           </div>
         ) : (
-          <Card>
-            <CardHeader>
-              <CardTitle>Editar comunidade</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <CommunityForm
-                initial={community}
-                submitLabel="Salvar alterações"
-                onSubmit={handleSubmit}
-                error={error}
-              />
-            </CardContent>
-          </Card>
+          <>
+            <div className="page-header">
+              <div className="eyebrow">comunidades</div>
+              <h1>Editar comunidade</h1>
+              <p>Atualize as informações e a identidade do seu espaço.</p>
+            </div>
+            <Card>
+              <CardHeader>
+                <CardTitle>Editar comunidade</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <CommunityForm
+                  initial={community}
+                  submitLabel="Salvar alterações"
+                  onSubmit={handleSubmit}
+                  error={error}
+                />
+              </CardContent>
+            </Card>
+          </>
         )}
       </main>
     </div>

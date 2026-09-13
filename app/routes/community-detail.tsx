@@ -98,7 +98,7 @@ export default function CommunityDetailPage() {
   return (
     <div className="min-h-svh">
       <Navbar />
-      <main className="shell">
+      <main className="shell community-detail-page">
         {community.loading ? (
           <CommunityLoading />
         ) : community.notFound ? (

@@ -15,14 +15,12 @@ export default function CommunitiesPage() {
   return (
     <div className="min-h-svh">
       <Navbar />
-      <main className="shell">
-        <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+      <main className="shell communities-page">
+        <div className="page-header flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <div className="eyebrow">conexões</div>
             <h1>Comunidades</h1>
-            <p className="mt-2 text-muted-foreground">
-              Encontre pessoas que compartilham seus interesses.
-            </p>
+            <p>Encontre pessoas que compartilham seus interesses.</p>
           </div>
           {!loading &&
             (user ? (

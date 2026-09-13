@@ -27,7 +27,9 @@ export default function SearchPage() {
   const term = searchParams.get("term")?.trim() ?? ""
   const validTerm =
     term.length >= MIN_TERM_LENGTH && term.length <= MAX_TERM_LENGTH
-  const [loadingMore, setLoadingMore] = useState<"users" | "communities" | null>(null)
+  const [loadingMore, setLoadingMore] = useState<
+    "users" | "communities" | null
+  >(null)
   const [loadMoreError, setLoadMoreError] = useState<string | null>(null)
 
   const emptyPage = {
@@ -50,7 +52,8 @@ export default function SearchPage() {
     }
   )
   const communities = useAsyncData(
-    () => (user && validTerm ? searchCommunities(term) : Promise.resolve(emptyPage)),
+    () =>
+      user && validTerm ? searchCommunities(term) : Promise.resolve(emptyPage),
     [term, validTerm, user],
     {
       resetOnFetch: true,
@@ -119,40 +122,41 @@ export default function SearchPage() {
   return (
     <div className="min-h-svh">
       <Navbar />
-      <main className="shell">
+      <main className="shell search-page">
         {authLoading ? (
           <div className="rounded-xl border border-dashed p-8 text-center">
             <p className="text-muted-foreground">Carregando...</p>
           </div>
         ) : !user ? (
-          <div className="rounded-xl border border-dashed p-8 text-center">
-            <h1>Entre para buscar</h1>
+          <div className="empty-state">
+            <div className="eyebrow">explorar</div>
+            <h2>Entre para buscar</h2>
             <p className="mt-2 text-muted-foreground">
               Faça login para encontrar pessoas e comunidades.
             </p>
           </div>
         ) : !term ? (
-          <div className="rounded-xl border border-dashed p-8 text-center">
-            <h1>Busca</h1>
+          <div className="empty-state">
+            <div className="eyebrow">explorar</div>
+            <h2>Busca</h2>
             <p className="mt-2 text-muted-foreground">
               Digite um termo para encontrar pessoas ou comunidades.
             </p>
           </div>
         ) : !validTerm ? (
-          <div className="rounded-xl border border-dashed p-8 text-center">
-            <h1>Termo inválido</h1>
+          <div className="empty-state">
+            <div className="eyebrow">explorar</div>
+            <h2>Termo inválido</h2>
             <p className="mt-2 text-muted-foreground">
               Informe um termo com pelo menos 2 e no máximo 100 caracteres.
             </p>
           </div>
         ) : (
           <>
-            <div className="mb-8">
+            <div className="page-header">
               <div className="eyebrow">explorar</div>
               <h1>Resultados para “{term}”</h1>
-              <p className="mt-2 text-muted-foreground">
-                Encontre novas conexões no newkut.
-              </p>
+              <p>Encontre novas conexões no newkut.</p>
             </div>
             <SearchResults
               users={users.data?.items ?? []}

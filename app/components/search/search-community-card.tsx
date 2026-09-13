@@ -10,7 +10,7 @@ export function SearchCommunityCard({
   return (
     <Link
       to={`/communities/${community.id}`}
-      className="block rounded-xl border bg-card p-4 transition-colors hover:border-primary/50 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+      className="search-card group block rounded-xl border bg-card p-5 transition-all hover:-translate-y-0.5 hover:border-primary/50 hover:shadow-card focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
     >
       <div className="flex items-center gap-3">
         <Avatar size="lg">

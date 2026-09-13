@@ -33,7 +33,7 @@ export default function NewCommunityPage() {
   return (
     <div className="min-h-svh">
       <Navbar />
-      <main className="shell max-w-2xl">
+      <main className="shell community-form-page max-w-2xl">
         {authLoading ? (
           <p className="py-12 text-center text-muted-foreground">
             Carregando...
@@ -49,22 +49,29 @@ export default function NewCommunityPage() {
             </Link>
           </div>
         ) : (
-          <Card>
-            <CardHeader>
-              <CardTitle>Criar comunidade</CardTitle>
-              <CardDescription>
-                Dê um nome ao seu novo espaço e conte às pessoas do que ele
-                trata.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <CommunityForm
-                submitLabel="Criar comunidade"
-                onSubmit={handleSubmit}
-                error={error}
-              />
-            </CardContent>
-          </Card>
+          <>
+            <div className="page-header">
+              <div className="eyebrow">comunidades</div>
+              <h1>Criar comunidade</h1>
+              <p>Crie um espaço para reunir pessoas com interesses em comum.</p>
+            </div>
+            <Card>
+              <CardHeader>
+                <CardTitle>Criar comunidade</CardTitle>
+                <CardDescription>
+                  Dê um nome ao seu novo espaço e conte às pessoas do que ele
+                  trata.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <CommunityForm
+                  submitLabel="Criar comunidade"
+                  onSubmit={handleSubmit}
+                  error={error}
+                />
+              </CardContent>
+            </Card>
+          </>
         )}
       </main>
     </div>

@@ -24,8 +24,10 @@ interface SearchResultsProps {
 
 function EmptyState({ label }: { label: string }) {
   return (
-    <div className="rounded-xl border border-dashed p-8 text-center text-muted-foreground">
-      Nenhum resultado encontrado em {label.toLowerCase()}.
+    <div className="empty-state">
+      <div className="eyebrow">{label.toLowerCase()}</div>
+      <h2>Nenhum resultado encontrado</h2>
+      <p>Não encontramos resultados para esta busca.</p>
     </div>
   )
 }
@@ -65,11 +67,12 @@ export function SearchResults(props: SearchResultsProps) {
   const hasNextPage = isPeople
     ? props.usersHasNextPage
     : props.communitiesHasNextPage
-  const isLoadingMore = props.loadingMore === (isPeople ? "users" : "communities")
+  const isLoadingMore =
+    props.loadingMore === (isPeople ? "users" : "communities")
 
   return (
     <section aria-label="Resultados da busca">
-      <div className="mb-6 flex gap-1 border-b" role="tablist">
+      <div className="profile-nav search-tabs" role="tablist">
         {hasPeople && (
           <button
             type="button"
@@ -78,7 +81,7 @@ export function SearchResults(props: SearchResultsProps) {
             aria-controls="search-panel-people"
             aria-selected={isPeople}
             onClick={() => setTab("people")}
-            className="border-b-2 px-4 py-3 text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none aria-selected:border-primary aria-selected:text-foreground aria-[selected=false]:border-transparent aria-[selected=false]:text-muted-foreground"
+            className="tab focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
           >
             Pessoas ({props.users.length})
           </button>
@@ -91,7 +94,7 @@ export function SearchResults(props: SearchResultsProps) {
             aria-controls="search-panel-communities"
             aria-selected={!isPeople}
             onClick={() => setTab("communities")}
-            className="border-b-2 px-4 py-3 text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none aria-selected:border-primary aria-selected:text-foreground aria-[selected=false]:border-transparent aria-[selected=false]:text-muted-foreground"
+            className="tab focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
           >
             Comunidades ({props.communities.length})
           </button>
@@ -142,7 +145,9 @@ export function SearchResults(props: SearchResultsProps) {
             <button
               type="button"
               className="btn"
-              onClick={() => props.onLoadMore(isPeople ? "users" : "communities")}
+              onClick={() =>
+                props.onLoadMore(isPeople ? "users" : "communities")
+              }
               disabled={props.loadingMore !== null}
             >
               {isLoadingMore ? "Carregando..." : "Carregar mais"}

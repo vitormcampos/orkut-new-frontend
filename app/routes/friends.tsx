@@ -99,12 +99,13 @@ export default function FriendsPage() {
     <div className="min-h-svh">
       <Navbar />
 
-      <div className="mx-auto max-w-2xl space-y-6 p-6">
-        <div className="mt-4">
-          <h1 className="text-2xl font-semibold">Amigos</h1>
-          <p className="text-muted-foreground">
-            Gerencie suas amizades e solicitações
-          </p>
+      <main className="shell friends-page">
+        <div className="page-header">
+          <div>
+            <div className="eyebrow">conexões</div>
+            <h1>Amigos</h1>
+            <p>Gerencie suas amizades e solicitações.</p>
+          </div>
         </div>
 
         {message && (
@@ -119,7 +120,11 @@ export default function FriendsPage() {
           </div>
         )}
 
-        <div className="flex gap-1 rounded-lg border bg-muted/50 p-1">
+        <div
+          className="profile-nav friends-tabs"
+          role="tablist"
+          aria-label="Seções de amizades"
+        >
           {(
             [
               { key: "amigos", label: "Amigos" },
@@ -132,11 +137,7 @@ export default function FriendsPage() {
               key={t.key}
               type="button"
               onClick={() => setTab(t.key)}
-              className={`flex-1 rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
-                tab === t.key
-                  ? "bg-background text-foreground shadow-sm"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
+              className={`tab ${tab === t.key ? "active" : ""}`}
             >
               {t.label}
               {t.key === "pending" &&
@@ -200,7 +201,7 @@ export default function FriendsPage() {
             onError={(text) => setMessage({ type: "error", text })}
           />
         )}
-      </div>
+      </main>
     </div>
   )
 }
