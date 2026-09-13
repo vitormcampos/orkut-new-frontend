@@ -9,13 +9,19 @@ import {
 
 import type { Route } from "./+types/root"
 import { AuthProvider } from "./lib/auth-context"
+import { ThemeProvider } from "./lib/theme-context"
 import "./app.css"
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="pt-BR">
+    <html lang="pt-BR" suppressHydrationWarning>
       <head>
         <meta charSet="utf-8" />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try { if (localStorage.getItem("newkut-theme") === "dark") document.documentElement.classList.add("dark") } catch {}`,
+          }}
+        />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <Meta />
         <Links />
@@ -31,9 +37,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
 export default function App() {
   return (
-    <AuthProvider>
-      <Outlet />
-    </AuthProvider>
+    <ThemeProvider>
+      <AuthProvider>
+        <Outlet />
+      </AuthProvider>
+    </ThemeProvider>
   )
 }
 

@@ -7,12 +7,15 @@ import {
   Home,
   Menu,
   MessageCircle,
+  Moon,
   Search,
+  Sun,
   Users,
   X,
 } from "lucide-react"
 import { Input } from "~/components/ui/input"
 import { useAuth } from "~/lib/auth-context"
+import { useTheme } from "~/lib/theme-context"
 
 function getInitials(name: string): string {
   return name
@@ -106,6 +109,7 @@ function Sidebar({
 export function Navbar() {
   const navigate = useNavigate()
   const { user, loading, logout } = useAuth()
+  const { theme, toggleTheme } = useTheme()
   const [searchTerm, setSearchTerm] = useState("")
   const [menuOpen, setMenuOpen] = useState(false)
 
@@ -166,6 +170,22 @@ export function Navbar() {
           </form>
 
           <div className="header-actions">
+            <button
+              type="button"
+              className="icon-btn"
+              onClick={toggleTheme}
+              aria-label={
+                theme === "dark" ? "Ativar modo claro" : "Ativar modo escuro"
+              }
+              aria-pressed={theme === "dark"}
+              title={theme === "dark" ? "Modo claro" : "Modo escuro"}
+            >
+              {theme === "dark" ? (
+                <Sun className="size-[18px]" aria-hidden="true" />
+              ) : (
+                <Moon className="size-[18px]" aria-hidden="true" />
+              )}
+            </button>
             {loading ? null : user ? (
               <>
                 <Link
