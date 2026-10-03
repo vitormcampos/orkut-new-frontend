@@ -30,12 +30,15 @@
 @theme {
   /* --- Fontes ---
      Display cria personalidade; Body sustenta leitura; Mono marca metadados. */
-  --font-sans: "Inter Variable", -apple-system, BlinkMacSystemFont,
-    "SF Pro Text", system-ui, sans-serif;
-  --font-display: "Inter Variable", -apple-system, BlinkMacSystemFont,
-    "SF Pro Display", system-ui, sans-serif;
-  --font-heading: "Inter Variable", -apple-system, BlinkMacSystemFont,
-    "SF Pro Display", system-ui, sans-serif;
+  --font-sans:
+    "Inter Variable", -apple-system, BlinkMacSystemFont, "SF Pro Text",
+    system-ui, sans-serif;
+  --font-display:
+    "Inter Variable", -apple-system, BlinkMacSystemFont, "SF Pro Display",
+    system-ui, sans-serif;
+  --font-heading:
+    "Inter Variable", -apple-system, BlinkMacSystemFont, "SF Pro Display",
+    system-ui, sans-serif;
   --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
 
   /* --- Tipografia: escala 11 / 13 / 15 / 16 / 24 / 32 + display fluido --- */
@@ -303,7 +306,10 @@
   border: 1px solid var(--border);
   border-radius: 999px;
   background: var(--secondary);
-  transition: border-color 0.16s ease, background 0.16s ease, box-shadow 0.16s ease;
+  transition:
+    border-color 0.16s ease,
+    background 0.16s ease,
+    box-shadow 0.16s ease;
 }
 .navbar-search:focus-within {
   border-color: var(--ring);
@@ -366,7 +372,9 @@
   display: grid;
   place-items: center;
   color: var(--muted-foreground);
-  transition: border-color 0.16s ease, background 0.16s ease;
+  transition:
+    border-color 0.16s ease,
+    background 0.16s ease;
 }
 .icon-btn:hover {
   border-color: var(--border-strong);
@@ -417,7 +425,9 @@
   color: var(--muted-foreground);
   font-size: 14px;
   font-weight: 550;
-  transition: background 0.16s ease, color 0.16s ease;
+  transition:
+    background 0.16s ease,
+    color 0.16s ease;
 }
 .sidebar-link:hover {
   background: var(--secondary);
@@ -444,7 +454,9 @@
 .app-sidebar {
   transition: transform 0.2s ease;
 }
-body:has(.app-sidebar) .min-h-svh > *:not(.app-header):not(.app-sidebar):not(.shell) {
+body:has(.app-sidebar)
+  .min-h-svh
+  > *:not(.app-header):not(.app-sidebar):not(.shell) {
   width: calc(100% - 248px);
   margin-left: 248px;
 }
@@ -733,6 +745,49 @@ body:has(.app-sidebar) .min-h-svh > .shell {
   color: var(--foreground);
 }
 
+/* ── Mural de publicações ───────────────────────────────────── */
+.post-wall {
+  --post-accent: color-mix(in oklch, var(--primary) 58%, var(--border));
+}
+.post-card {
+  border-color: var(--border);
+  box-shadow: var(--shadow-card);
+}
+.post-composer-input {
+  line-height: 1.65;
+}
+.post-composer-input::placeholder {
+  color: var(--muted-foreground);
+  opacity: 0.82;
+}
+.post-card {
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.16s ease;
+}
+.post-card::before {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 3px;
+  background: var(--post-accent);
+  content: "";
+}
+.post-card:hover {
+  border-color: var(--border-strong);
+}
+.post-content {
+  padding-left: 1px;
+}
+.post-loading {
+  border-style: dashed;
+  box-shadow: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .post-card {
+    transition: none;
+  }
+}
+
 /* ── Estados vazios ─────────────────────────────────────────── */
 .empty-state {
   padding: 50px 20px;
@@ -885,7 +940,9 @@ body:has(.app-sidebar) .min-h-svh > .shell {
     border: 0;
     background: oklch(18% 0.012 250 / 0.45);
   }
-  body:has(.app-sidebar) .min-h-svh > *:not(.app-header):not(.app-sidebar):not(.shell) {
+  body:has(.app-sidebar)
+    .min-h-svh
+    > *:not(.app-header):not(.app-sidebar):not(.shell) {
     width: auto;
     margin-left: 0;
   }

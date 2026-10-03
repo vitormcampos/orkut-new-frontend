@@ -192,6 +192,29 @@ export interface CommunityMemberDto {
   joinedAt: string
 }
 
+export interface PostDto {
+  id: string
+  authorId: string
+  authorName: string
+  authorUsername: string
+  authorProfilePicture?: string | null
+  communityId: string | null
+  content: string
+  createdAt: string
+}
+
+export interface PostPageDto {
+  items: PostDto[]
+  page: number
+  pageSize: number
+  totalCount: number
+}
+
+export interface CreatePostRequest {
+  communityId?: string | null
+  content: string
+}
+
 export interface CreateCommunityRequest {
   name: string
   description?: string

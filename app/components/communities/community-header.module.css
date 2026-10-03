@@ -1,0 +1,131 @@
+.hero {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  min-height: 236px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-2xl);
+  background: var(--card);
+  box-shadow: var(--shadow-card);
+}
+
+.art {
+  position: absolute;
+  z-index: -1;
+  inset: 0 0 auto;
+  height: 132px;
+  background:
+    radial-gradient(
+      ellipse at 84% 30%,
+      color-mix(in oklch, var(--primary) 18%, transparent),
+      transparent 42%
+    ),
+    linear-gradient(
+      112deg,
+      var(--accent-soft),
+      color-mix(in oklch, var(--card) 75%, var(--accent-soft)) 58%,
+      var(--card)
+    );
+}
+
+.art::after {
+  position: absolute;
+  right: 9%;
+  bottom: -48px;
+  width: 190px;
+  height: 112px;
+  border: 1px solid color-mix(in oklch, var(--primary) 12%, transparent);
+  border-radius: 60% 40% 0 0;
+  content: "";
+  transform: rotate(-15deg);
+}
+
+.content {
+  display: flex;
+  align-items: flex-end;
+  gap: 22px;
+  min-height: 236px;
+  padding: 92px 32px 28px;
+}
+
+.avatar {
+  width: 112px;
+  height: 112px;
+  flex: 0 0 auto;
+  border: 5px solid var(--card);
+  border-radius: 26px;
+  background: var(--secondary);
+  box-shadow: 0 0 0 1px var(--border);
+}
+
+.copy {
+  min-width: 0;
+  flex: 1;
+}
+
+.copy h1 {
+  margin-top: 4px;
+  font-family: var(--font-display);
+  font-size: clamp(30px, 4vw, 42px);
+  font-weight: 620;
+  line-height: 1.08;
+  letter-spacing: -0.035em;
+  overflow-wrap: anywhere;
+}
+
+.memberCount {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 9px;
+  color: var(--muted-foreground);
+  font-size: 13px;
+}
+
+.memberCount svg {
+  color: var(--primary);
+}
+
+@media (max-width: 760px) {
+  .hero,
+  .content {
+    min-height: 205px;
+  }
+
+  .content {
+    gap: 15px;
+    padding: 92px 20px 20px;
+  }
+
+  .avatar {
+    width: 82px;
+    height: 82px;
+    border-radius: 20px;
+  }
+
+  .art {
+    height: 118px;
+  }
+
+  .copy h1 {
+    font-size: clamp(25px, 7vw, 34px);
+  }
+}
+
+@media (max-width: 420px) {
+  .content {
+    gap: 12px;
+    padding-right: 14px;
+    padding-left: 14px;
+  }
+
+  .avatar {
+    width: 68px;
+    height: 68px;
+    border-radius: 17px;
+  }
+
+  .copy h1 {
+    font-size: 25px;
+  }
+}

@@ -38,7 +38,7 @@ export function ScrapWall({ profile }: { profile: PublicProfileDto }) {
   const { data, setData, loading, error, refresh } = useAsyncData(
     () => getProfileScraps(profile.id),
     [profile.id],
-    { fallbackError: "Erro ao carregar scraps." }
+    { fallbackError: "Erro ao carregar recados." }
   )
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -66,7 +66,9 @@ export function ScrapWall({ profile }: { profile: PublicProfileDto }) {
                     createdScrap.authorProfilePicture
                   ),
                 },
-                ...current.items.filter((scrap) => scrap.id !== createdScrap.id),
+                ...current.items.filter(
+                  (scrap) => scrap.id !== createdScrap.id
+                ),
               ],
               totalItems: current.totalItems + 1,
             }
@@ -86,7 +88,9 @@ export function ScrapWall({ profile }: { profile: PublicProfileDto }) {
             }
       )
     } catch (err) {
-      setActionError(getErrorMessage(err, "Não foi possível publicar o scrap."))
+      setActionError(
+        getErrorMessage(err, "Não foi possível publicar o recado.")
+      )
     } finally {
       setSubmitting(false)
     }
@@ -115,7 +119,7 @@ export function ScrapWall({ profile }: { profile: PublicProfileDto }) {
       )
     } catch (err) {
       setActionError(
-        getErrorMessage(err, "Não foi possível carregar mais scraps.")
+        getErrorMessage(err, "Não foi possível carregar mais recados.")
       )
     } finally {
       setLoadingMore(false)
@@ -137,18 +141,21 @@ export function ScrapWall({ profile }: { profile: PublicProfileDto }) {
           : current
       )
     } catch (err) {
-      setActionError(getErrorMessage(err, "Não foi possível excluir o scrap."))
+      setActionError(getErrorMessage(err, "Não foi possível excluir o recado."))
     } finally {
       setDeletingId(null)
     }
   }
 
   return (
-    <section className="space-y-5" aria-labelledby="scraps-title">
+    <section className="space-y-5" aria-labelledby="recados-title">
       <div>
         <div className="section-title">mural</div>
-        <h2 id="scraps-title" className="text-2xl font-semibold tracking-tight">
-          Scraps
+        <h2
+          id="recados-title"
+          className="text-2xl font-semibold tracking-tight"
+        >
+          Recados
         </h2>
         <p className="mt-1 text-sm text-muted-foreground">
           Deixe um recado para {profile.name}.
@@ -161,7 +168,7 @@ export function ScrapWall({ profile }: { profile: PublicProfileDto }) {
           className="space-y-3 rounded-xl border bg-card p-5"
         >
           <label htmlFor="scrap-content" className="sr-only">
-            Escreva um scrap
+            Escreva um recado
           </label>
           <textarea
             id="scrap-content"
@@ -197,7 +204,7 @@ export function ScrapWall({ profile }: { profile: PublicProfileDto }) {
               className="btn primary"
               disabled={submitting || !content.trim()}
             >
-              {submitting ? "Publicando..." : "Publicar scrap"}
+              {submitting ? "Publicando..." : "Publicar recado"}
             </button>
           </div>
         </form>
@@ -211,7 +218,7 @@ export function ScrapWall({ profile }: { profile: PublicProfileDto }) {
 
       {loading ? (
         <p className="py-8 text-center text-sm text-muted-foreground">
-          Carregando scraps...
+          Carregando recados...
         </p>
       ) : error ? (
         <div className="empty-state">
@@ -290,7 +297,7 @@ export function ScrapWall({ profile }: { profile: PublicProfileDto }) {
         </div>
       ) : (
         <div className="empty-state">
-          <h2>Nenhum scrap ainda</h2>
+          <h2>Nenhum recado ainda</h2>
           <p>Seja a primeira pessoa a deixar um recado.</p>
         </div>
       )}

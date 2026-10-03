@@ -1,0 +1,115 @@
+.control {
+  display: grid;
+  gap: 11px;
+}
+
+.heading {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.icon {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: 10px;
+  background: var(--accent-soft);
+  color: var(--primary);
+}
+
+.heading h2 {
+  font-size: 14px;
+  font-weight: 620;
+}
+
+.heading p {
+  margin-top: 2px;
+  color: var(--muted-foreground);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.preview {
+  position: relative;
+  display: grid;
+  overflow: hidden;
+  aspect-ratio: 16 / 9;
+  place-items: center;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--secondary);
+}
+
+.preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.placeholder {
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  color: var(--muted-foreground);
+  font-size: 12px;
+}
+
+.placeholder svg {
+  color: var(--primary);
+}
+
+.progress {
+  position: absolute;
+  inset: auto 0 0;
+  padding: 8px 10px;
+  background: color-mix(in oklch, var(--foreground) 78%, transparent);
+  color: var(--card);
+  font-size: 12px;
+  text-align: center;
+}
+
+.picker {
+  position: relative;
+  display: flex;
+  min-height: 40px;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  overflow: hidden;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-md);
+  color: var(--foreground);
+  font-size: 13px;
+  font-weight: 550;
+  cursor: pointer;
+  transition:
+    background 0.16s ease,
+    border-color 0.16s ease;
+}
+
+.picker:hover {
+  border-color: var(--primary);
+  background: var(--accent-soft);
+}
+
+.picker:focus-within {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+.picker input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  opacity: 0;
+}
+
+.picker:has(input:disabled) {
+  cursor: wait;
+  opacity: 0.65;
+}

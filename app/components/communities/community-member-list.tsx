@@ -1,6 +1,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar"
 import type { CommunityMemberDto } from "~/lib/api/types"
 import { CommunityEmptyState } from "~/components/communities/community-empty-state"
+import styles from "./community-member-list.module.css"
 
 export function CommunityMemberList({
   members,
@@ -15,12 +16,9 @@ export function CommunityMemberList({
       />
     )
   return (
-    <div className="grid gap-3 sm:grid-cols-2">
+    <div className={styles.list}>
       {members.map((member) => (
-        <div
-          key={member.userId}
-          className="flex items-center gap-3 rounded-xl border bg-card p-3 transition-colors hover:border-primary/50"
-        >
+        <div key={member.userId} className={styles.member}>
           <Avatar>
             <AvatarImage src={member.userProfilePicture ?? undefined} alt="" />
             <AvatarFallback>

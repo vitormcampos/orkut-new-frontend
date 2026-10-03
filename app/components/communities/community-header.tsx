@@ -1,12 +1,14 @@
+import { Users } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar"
 import type { CommunityDto } from "~/lib/api/types"
+import styles from "./community-header.module.css"
 
 export function CommunityHeader({ community }: { community: CommunityDto }) {
   return (
-    <section className="relative overflow-hidden rounded-2xl border bg-card p-6 shadow-sm sm:p-8">
-      <div className="absolute inset-x-0 top-0 h-24 bg-primary/10" />
-      <div className="relative flex flex-col gap-5 sm:flex-row sm:items-end">
-        <Avatar size="lg" className="size-24 ring-4 ring-card sm:size-28">
+    <section className={styles.hero}>
+      <div className={styles.art} aria-hidden="true" />
+      <div className={styles.content}>
+        <Avatar size="lg" className={styles.avatar}>
           <AvatarImage
             src={community.photo ?? undefined}
             alt={`Foto de ${community.name}`}
@@ -15,14 +17,15 @@ export function CommunityHeader({ community }: { community: CommunityDto }) {
             {community.name.slice(0, 2).toUpperCase()}
           </AvatarFallback>
         </Avatar>
-        <div className="flex-1">
-          <div className="eyebrow">comunidade</div>
-          <h1 className="mt-1 text-3xl font-semibold tracking-tight">
-            {community.name}
-          </h1>
-          <p className="mt-2 text-sm text-muted-foreground">
-            {community.memberCount}{" "}
-            {community.memberCount === 1 ? "membro" : "membros"}
+        <div className={styles.copy}>
+          <p className="eyebrow">espaço da comunidade</p>
+          <h1>{community.name}</h1>
+          <p className={styles.memberCount}>
+            <Users size={16} aria-hidden="true" />
+            <span>
+              {community.memberCount}{" "}
+              {community.memberCount === 1 ? "membro" : "membros"}
+            </span>
           </p>
         </div>
       </div>

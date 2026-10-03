@@ -4,11 +4,9 @@ import { getFriendDisplay } from "~/lib/friendship-utils"
 import { useAsyncData } from "~/lib/use-async-data"
 
 export function ProfileConnections({ userId }: { userId: string }) {
-  const { data, loading, error, refresh } = useAsyncData(
-    getFriends,
-    [userId],
-    { fallbackError: "Erro ao carregar conexões." }
-  )
+  const { data, loading, error, refresh } = useAsyncData(getFriends, [userId], {
+    fallbackError: "Erro ao carregar conexões.",
+  })
 
   if (loading) {
     return (

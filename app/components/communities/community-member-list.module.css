@@ -1,0 +1,22 @@
+.list {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.member {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  border: 1px solid transparent;
+  border-radius: var(--radius-lg);
+  background: var(--secondary);
+  padding: 9px;
+  transition: border-color 0.16s ease;
+}
+
+.member:hover {
+  border-color: var(--border-strong);
+}

@@ -5,6 +5,7 @@ import { Navbar } from "~/components/navbar"
 import { ProfileCommunities } from "~/components/communities/profile-communities"
 import { ProfileConnections } from "~/components/profile/profile-connections"
 import { ScrapWall } from "~/components/scraps/scrap-wall"
+import { PostWall } from "~/components/posts/post-wall"
 import { useAuth } from "~/lib/auth-context"
 import { ApiError, getErrorMessage } from "~/lib/api/client"
 import { useAsyncData } from "~/lib/use-async-data"
@@ -242,7 +243,7 @@ export default function ProfilePage() {
 
   const tabs: Array<{ key: TabKey; label: string }> = [
     { key: "publicacoes", label: "Publicações" },
-    { key: "scraps", label: "Scraps" },
+    { key: "scraps", label: "Recados" },
     { key: "sobre", label: "Sobre" },
     { key: "comunidades", label: "Comunidades" },
     { key: "conexoes", label: "Conexões" },
@@ -393,14 +394,7 @@ export default function ProfilePage() {
                 {tab === "scraps" && profile && <ScrapWall profile={profile} />}
 
                 {tab === "publicacoes" && (
-                  <div className="empty-state">
-                    <div className="eyebrow">publicações</div>
-                    <h2>Em breve</h2>
-                    <p>
-                      Este espaço vai reunir o que {firstName(profile.name)}{" "}
-                      compartilha.
-                    </p>
-                  </div>
+                  <PostWall userId={profile.id} canPost={isSelf} />
                 )}
 
                 {tab === "sobre" &&
@@ -441,9 +435,7 @@ export default function ProfilePage() {
                     <div className="empty-state">
                       <div className="eyebrow">conexões</div>
                       <h2>Amigos em comum</h2>
-                      <p>
-                        Veja os amigos em comum na barra lateral.
-                      </p>
+                      <p>Veja os amigos em comum na barra lateral.</p>
                     </div>
                   ))}
               </section>

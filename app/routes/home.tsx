@@ -123,11 +123,11 @@ export default function Home() {
                   strokeLinejoin="round"
                   className="text-primary"
                 >
-                  <title>Scraps</title>
+                  <title>Recados</title>
                   <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
                 </svg>
               </div>
-              <h3 className="font-semibold">Scraps</h3>
+              <h3 className="font-semibold">Recados</h3>
               <p className="text-sm text-muted-foreground">
                 Deixe recados no perfil dos seus amigos como nos velhos tempos.
               </p>
