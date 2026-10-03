@@ -1,7 +1,7 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
-@import "@fontsource-variable/inter";
+@import "@fontsource-variable/dm-sans";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -31,13 +31,13 @@
   /* --- Fontes ---
      Display cria personalidade; Body sustenta leitura; Mono marca metadados. */
   --font-sans:
-    "Inter Variable", -apple-system, BlinkMacSystemFont, "SF Pro Text",
+    "DM Sans Variable", "DM Sans", -apple-system, BlinkMacSystemFont,
     system-ui, sans-serif;
   --font-display:
-    "Inter Variable", -apple-system, BlinkMacSystemFont, "SF Pro Display",
+    "DM Sans Variable", "DM Sans", -apple-system, BlinkMacSystemFont,
     system-ui, sans-serif;
   --font-heading:
-    "Inter Variable", -apple-system, BlinkMacSystemFont, "SF Pro Display",
+    "DM Sans Variable", "DM Sans", -apple-system, BlinkMacSystemFont,
     system-ui, sans-serif;
   --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
 
@@ -101,6 +101,9 @@
   --color-popover-foreground: var(--popover-foreground);
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
+  --color-brand: var(--brand);
+  --color-brand-light: var(--brand-light);
+  --color-brand-deep: var(--brand-deep);
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
   --color-muted: var(--muted);
@@ -139,111 +142,121 @@
 :root {
   color-scheme: light;
 
-  /* neutros */
-  --background: oklch(99% 0.002 240);
-  --foreground: oklch(18% 0.012 250);
+  /* Base e superfícies azuladas */
+  --background: oklch(98.5% 0.006 255);
+  --foreground: oklch(21% 0.018 255);
   --card: oklch(100% 0 0);
-  --card-foreground: oklch(18% 0.012 250);
+  --card-foreground: oklch(21% 0.018 255);
   --popover: oklch(100% 0 0);
-  --popover-foreground: oklch(18% 0.012 250);
-  --secondary: oklch(97% 0.006 250);
-  --secondary-foreground: oklch(18% 0.012 250);
-  --muted: oklch(97% 0.006 250);
-  --muted-foreground: oklch(54% 0.012 250);
-  --accent: oklch(97% 0.006 250);
-  --accent-foreground: oklch(18% 0.012 250);
-  --border: oklch(92% 0.005 250);
-  --border-strong: oklch(84% 0.01 250);
-  --input: oklch(92% 0.005 250);
-  --ring: oklch(58% 0.18 255);
+  --popover-foreground: oklch(21% 0.018 255);
+  --secondary: oklch(96.5% 0.012 255);
+  --secondary-foreground: oklch(25% 0.025 255);
+  --muted: oklch(96.5% 0.01 255);
+  --muted-foreground: oklch(52% 0.025 255);
+  --accent: oklch(95% 0.025 255);
+  --accent-foreground: oklch(32% 0.11 255);
+  --border: oklch(91% 0.015 255);
+  --border-strong: oklch(82% 0.025 255);
+  --input: oklch(91% 0.015 255);
 
-  /* ação (azul Conexão) */
+  /* Marca funcional */
   --primary: oklch(58% 0.18 255);
   --primary-foreground: oklch(100% 0 0);
+  --ring: oklch(58% 0.18 255);
   --accent-soft: oklch(96% 0.025 255);
   --accent-deep: oklch(43% 0.16 255);
 
-  /* semânticos */
-  --success: oklch(62% 0.14 150);
+  /* Identidade visual da logo */
+  --brand: oklch(58% 0.18 255);
+  --brand-light: oklch(72% 0.14 255);
+  --brand-deep: oklch(43% 0.16 255);
+
+  /* Estados */
+  --success: oklch(58% 0.12 155);
   --success-foreground: oklch(100% 0 0);
-  --warning: oklch(68% 0.14 75);
-  --warning-foreground: oklch(18% 0.012 250);
+  --warning: oklch(70% 0.13 72);
+  --warning-foreground: oklch(22% 0.025 65);
   --danger: oklch(52% 0.16 25);
   --danger-foreground: oklch(100% 0 0);
   --destructive: oklch(52% 0.16 25);
   --destructive-foreground: oklch(100% 0 0);
 
-  /* gráficos */
+  /* Gráficos */
   --chart-1: oklch(58% 0.18 255);
-  --chart-2: oklch(62% 0.14 150);
-  --chart-3: oklch(68% 0.14 75);
-  --chart-4: oklch(52% 0.16 25);
-  --chart-5: oklch(54% 0.012 250);
+  --chart-2: oklch(62% 0.14 210);
+  --chart-3: oklch(62% 0.14 285);
+  --chart-4: oklch(65% 0.13 155);
+  --chart-5: oklch(72% 0.13 75);
 
-  /* sidebar */
-  --sidebar: oklch(97% 0.006 250);
-  --sidebar-foreground: oklch(18% 0.012 250);
+  /* Sidebar */
+  --sidebar: oklch(96.5% 0.012 255);
+  --sidebar-foreground: oklch(21% 0.018 255);
   --sidebar-primary: oklch(58% 0.18 255);
   --sidebar-primary-foreground: oklch(100% 0 0);
-  --sidebar-accent: oklch(97% 0.006 250);
-  --sidebar-accent-foreground: oklch(18% 0.012 250);
-  --sidebar-border: oklch(92% 0.005 250);
+  --sidebar-accent: oklch(95% 0.025 255);
+  --sidebar-accent-foreground: oklch(32% 0.11 255);
+  --sidebar-border: oklch(91% 0.015 255);
   --sidebar-ring: oklch(58% 0.18 255);
 }
 
 .dark {
   color-scheme: dark;
 
-  /* neutros */
-  --background: oklch(16% 0.012 250);
-  --foreground: oklch(94% 0.008 250);
-  --card: oklch(21% 0.014 250);
-  --card-foreground: oklch(94% 0.008 250);
-  --popover: oklch(21% 0.014 250);
-  --popover-foreground: oklch(94% 0.008 250);
-  --secondary: oklch(25% 0.012 250);
-  --secondary-foreground: oklch(94% 0.008 250);
-  --muted: oklch(25% 0.012 250);
-  --muted-foreground: oklch(70% 0.012 250);
-  --accent: oklch(25% 0.012 250);
-  --accent-foreground: oklch(94% 0.008 250);
-  --border: oklch(31% 0.014 250);
-  --border-strong: oklch(39% 0.016 250);
-  --input: oklch(31% 0.014 250);
-  --ring: oklch(70% 0.16 255);
+  /* Base e superfícies azul-carvão */
+  --background: oklch(16% 0.018 255);
+  --foreground: oklch(94% 0.01 255);
+  --card: oklch(20% 0.022 255);
+  --card-foreground: oklch(94% 0.01 255);
+  --popover: oklch(20% 0.022 255);
+  --popover-foreground: oklch(94% 0.01 255);
+  --secondary: oklch(24% 0.025 255);
+  --secondary-foreground: oklch(94% 0.01 255);
+  --muted: oklch(24% 0.022 255);
+  --muted-foreground: oklch(72% 0.025 255);
+  --accent: oklch(27% 0.04 255);
+  --accent-foreground: oklch(94% 0.01 255);
+  --border: oklch(31% 0.025 255);
+  --border-strong: oklch(40% 0.035 255);
+  --input: oklch(31% 0.025 255);
 
-  /* ação (azul Conexão) */
-  --primary: oklch(70% 0.16 255);
-  --primary-foreground: oklch(16% 0.012 250);
-  --accent-soft: oklch(25% 0.035 255);
-  --accent-deep: oklch(78% 0.14 255);
+  /* Marca funcional */
+  --primary: oklch(68% 0.17 255);
+  --primary-foreground: oklch(16% 0.025 255);
+  --ring: oklch(68% 0.17 255);
+  --accent-soft: oklch(25% 0.045 255);
+  --accent-deep: oklch(76% 0.13 255);
 
-  /* semânticos */
-  --success: oklch(72% 0.13 150);
-  --success-foreground: oklch(16% 0.012 250);
-  --warning: oklch(78% 0.11 75);
-  --warning-foreground: oklch(16% 0.012 250);
+  /* Identidade visual da logo */
+  --brand: oklch(68% 0.17 255);
+  --brand-light: oklch(78% 0.12 255);
+  --brand-deep: oklch(50% 0.17 255);
+
+  /* Estados */
+  --success: oklch(72% 0.12 155);
+  --success-foreground: oklch(17% 0.02 255);
+  --warning: oklch(80% 0.11 75);
+  --warning-foreground: oklch(17% 0.02 255);
   --danger: oklch(70% 0.14 25);
-  --danger-foreground: oklch(16% 0.012 250);
+  --danger-foreground: oklch(17% 0.02 255);
   --destructive: oklch(70% 0.14 25);
-  --destructive-foreground: oklch(16% 0.012 250);
+  --destructive-foreground: oklch(17% 0.02 255);
 
-  /* gráficos */
-  --chart-1: oklch(70% 0.16 255);
-  --chart-2: oklch(72% 0.13 150);
-  --chart-3: oklch(78% 0.11 75);
-  --chart-4: oklch(70% 0.14 25);
-  --chart-5: oklch(70% 0.012 250);
+  /* Gráficos */
+  --chart-1: oklch(68% 0.17 255);
+  --chart-2: oklch(70% 0.14 210);
+  --chart-3: oklch(72% 0.14 285);
+  --chart-4: oklch(72% 0.12 155);
+  --chart-5: oklch(80% 0.11 75);
 
-  /* sidebar */
-  --sidebar: oklch(21% 0.014 250);
-  --sidebar-foreground: oklch(94% 0.008 250);
-  --sidebar-primary: oklch(70% 0.16 255);
-  --sidebar-primary-foreground: oklch(16% 0.012 250);
-  --sidebar-accent: oklch(25% 0.012 250);
-  --sidebar-accent-foreground: oklch(94% 0.008 250);
-  --sidebar-border: oklch(31% 0.014 250);
-  --sidebar-ring: oklch(70% 0.16 255);
+  /* Sidebar */
+  --sidebar: oklch(20% 0.022 255);
+  --sidebar-foreground: oklch(94% 0.01 255);
+  --sidebar-primary: oklch(68% 0.17 255);
+  --sidebar-primary-foreground: oklch(16% 0.025 255);
+  --sidebar-accent: oklch(27% 0.04 255);
+  --sidebar-accent-foreground: oklch(94% 0.01 255);
+  --sidebar-border: oklch(31% 0.025 255);
+  --sidebar-ring: oklch(68% 0.17 255);
 }
 
 @layer base {
@@ -329,19 +342,15 @@
   display: flex;
   align-items: center;
   gap: 10px;
+  font-size: 18px;
   font-weight: 650;
   letter-spacing: -0.02em;
 }
-.brand-mark {
+.brand-logo {
   width: 30px;
   height: 30px;
-  border-radius: 9px;
-  display: grid;
-  place-items: center;
-  background: var(--primary);
-  color: var(--primary-foreground);
-  font-weight: 700;
-  font-size: 14px;
+  flex: 0 0 auto;
+  object-fit: contain;
 }
 .header-nav {
   display: flex;
@@ -849,6 +858,13 @@ body:has(.app-sidebar) .min-h-svh > .shell {
   min-height: 36px;
   padding: 0 12px;
   font-size: 13px;
+}
+.navbar-create-btn {
+  line-height: 1;
+}
+.navbar-create-btn svg {
+  display: block;
+  flex: 0 0 auto;
 }
 .btn.danger {
   border-color: color-mix(in oklch, var(--destructive) 40%, var(--border));

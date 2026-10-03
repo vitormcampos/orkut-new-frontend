@@ -1,0 +1,132 @@
+.dialog {
+  width: min(100% - 32px, 540px);
+  max-height: min(85dvh, 720px);
+  margin: auto;
+  padding: 0;
+  overflow: auto;
+  color: var(--foreground);
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  box-shadow: 0 24px 80px oklch(15% 0.025 255 / 22%);
+}
+
+.dialog::backdrop {
+  background: oklch(15% 0.025 255 / 48%);
+  backdrop-filter: blur(3px);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 22px 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.header h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 650;
+  letter-spacing: -0.025em;
+}
+
+.close {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  place-items: center;
+  color: var(--muted-foreground);
+  background: transparent;
+  border: 0;
+  border-radius: 50%;
+  font-size: 25px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.close:hover {
+  color: var(--foreground);
+  background: var(--muted);
+}
+
+.form {
+  display: grid;
+  gap: 9px;
+  padding: 20px 22px 22px;
+}
+
+.form label {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.form select,
+.form textarea {
+  width: 100%;
+  color: var(--foreground);
+  background: var(--background);
+  border: 1px solid var(--input);
+  border-radius: 9px;
+  font: inherit;
+}
+
+.form select {
+  min-height: 42px;
+  padding: 0 12px;
+}
+
+.form textarea {
+  min-height: 150px;
+  padding: 12px;
+  resize: vertical;
+}
+
+.form select:focus-visible,
+.form textarea:focus-visible,
+.close:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+.form textarea::placeholder {
+  color: var(--muted-foreground);
+}
+
+.hint,
+.error {
+  margin: 0 0 4px;
+  font-size: 12px;
+}
+
+.hint {
+  color: var(--muted-foreground);
+}
+
+.error {
+  color: var(--destructive);
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 5px;
+}
+
+.count {
+  color: var(--muted-foreground);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 480px) {
+  .header {
+    padding: 17px 18px 14px;
+  }
+
+  .form {
+    padding: 18px;
+  }
+}

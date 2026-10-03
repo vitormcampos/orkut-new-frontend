@@ -8,12 +8,14 @@ import {
   Menu,
   MessageCircle,
   Moon,
+  Plus,
   Search,
   Sun,
   Users,
   X,
 } from "lucide-react"
 import { Input } from "~/components/ui/input"
+import { CreatePostDialog } from "~/components/posts/create-post-dialog"
 import { useAuth } from "~/lib/auth-context"
 import { useTheme } from "~/lib/theme-context"
 
@@ -112,6 +114,7 @@ export function Navbar() {
   const { theme, toggleTheme } = useTheme()
   const [searchTerm, setSearchTerm] = useState("")
   const [menuOpen, setMenuOpen] = useState(false)
+  const [createPostOpen, setCreatePostOpen] = useState(false)
 
   useEffect(() => {
     document.body.classList.toggle("has-sidebar", !!user)
@@ -145,8 +148,8 @@ export function Navbar() {
                 <Menu className="size-5" aria-hidden="true" />
               </button>
             )}
-            <Link to="/" className="brand">
-              <span className="brand-mark">n</span>
+            <Link to="/" className="brand" aria-label="newkut — início">
+              <img className="brand-logo" src="/newkut.png" alt="" />
               <span>newkut</span>
             </Link>
           </div>
@@ -170,6 +173,16 @@ export function Navbar() {
           </form>
 
           <div className="header-actions">
+            {user && (
+              <button
+                type="button"
+                className="btn small primary navbar-create-btn"
+                onClick={() => setCreatePostOpen(true)}
+              >
+                <Plus className="size-4" aria-hidden="true" />
+                Criar
+              </button>
+            )}
             <button
               type="button"
               className="icon-btn"
@@ -188,12 +201,6 @@ export function Navbar() {
             </button>
             {loading ? null : user ? (
               <>
-                <Link
-                  to={user.username ? `/u/${user.username}` : "/me"}
-                  className="hidden text-sm text-muted-foreground transition-colors hover:text-foreground sm:inline"
-                >
-                  {user.name}
-                </Link>
                 <Link
                   to={user.username ? `/u/${user.username}` : "/me"}
                   className="avatar-btn"
@@ -238,6 +245,13 @@ export function Navbar() {
           </div>
         </div>
       </header>
+      {user && createPostOpen && (
+        <CreatePostDialog
+          open
+          user={user}
+          onClose={() => setCreatePostOpen(false)}
+        />
+      )}
       {user && (
         <Sidebar onClose={() => setMenuOpen(false)} mobileOpen={menuOpen} />
       )}
