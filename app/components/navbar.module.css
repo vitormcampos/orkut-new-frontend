@@ -1,0 +1,126 @@
+.inner {
+  display: grid;
+  width: 100%;
+  height: 100%;
+  grid-template-columns: 1fr minmax(280px, 440px) 1fr;
+  align-items: center;
+  gap: 24px;
+  padding: 0 32px;
+}
+
+.leading {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.menuButton {
+  display: none;
+  width: 40px;
+  height: 40px;
+  place-items: center;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--card);
+  color: var(--muted-foreground);
+}
+
+.search {
+  position: relative;
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--secondary);
+  transition:
+    border-color 0.16s ease,
+    background 0.16s ease,
+    box-shadow 0.16s ease;
+}
+
+.search:focus-within {
+  border-color: var(--ring);
+  background: var(--card);
+  box-shadow: 0 0 0 4px color-mix(in oklch, var(--ring) 14%, transparent);
+}
+
+.searchIcon {
+  position: absolute;
+  top: 50%;
+  left: 16px;
+  z-index: 1;
+  color: var(--muted-foreground);
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 18px;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+}
+
+.logo {
+  width: 30px;
+  height: 30px;
+  flex: 0 0 auto;
+  object-fit: contain;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.avatar {
+  display: grid;
+  width: 40px;
+  height: 40px;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: linear-gradient(135deg, oklch(78% 0.09 28), oklch(62% 0.12 356));
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  transition:
+    border-color 0.16s ease,
+    background 0.16s ease;
+}
+
+@media (max-width: 760px) {
+  .inner {
+    display: flex;
+    width: 100%;
+    gap: 12px;
+    padding: 0 16px;
+  }
+
+  .menuButton {
+    display: grid;
+  }
+
+  .search {
+    order: 2;
+    min-width: 0;
+    flex: 1;
+  }
+
+  .leading {
+    order: 1;
+  }
+
+  .actions {
+    order: 3;
+  }
+
+  .actions > form,
+  .actions > a:first-of-type,
+  .actions > button:last-child {
+    display: none;
+  }
+}

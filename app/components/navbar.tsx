@@ -11,13 +11,16 @@ import {
   Plus,
   Search,
   Sun,
-  Users,
   X,
 } from "lucide-react"
 import { Input } from "~/components/ui/input"
 import { CreatePostDialog } from "~/components/posts/create-post-dialog"
+import { getUserCommunities } from "~/lib/api/community"
+import { useAsyncData } from "~/lib/use-async-data"
 import { useAuth } from "~/lib/auth-context"
 import { useTheme } from "~/lib/theme-context"
+import navbarStyles from "./navbar.module.css"
+import sidebarStyles from "./sidebar.module.css"
 
 function getInitials(name: string): string {
   return name
@@ -30,32 +33,42 @@ function getInitials(name: string): string {
 
 const navigationItems = [
   { label: "Feed", href: "/", icon: Home },
-  { label: "Amigos", href: "/friends", icon: Users },
   { label: "Comunidades", href: "/communities", icon: MessageCircle },
 ] as const
 
 function Sidebar({
+  userId,
   onClose,
   mobileOpen = false,
 }: {
+  userId: string
   onClose?: () => void
   mobileOpen?: boolean
 }) {
   const location = useLocation()
+  const { data: communities, loading: communitiesLoading } = useAsyncData(
+    () => getUserCommunities(userId),
+    [userId],
+    { fallbackError: "Não foi possível carregar suas comunidades." }
+  )
 
   return (
     <aside
-      className={["app-sidebar", mobileOpen && "is-open"]
+      className={[
+        "app-sidebar",
+        sidebarStyles.sidebar,
+        mobileOpen && sidebarStyles.open,
+      ]
         .filter(Boolean)
         .join(" ")}
       aria-label="Navegação principal"
     >
-      <div className="sidebar-heading">
+      <div className={sidebarStyles.heading}>
         <span className="eyebrow">sua rede</span>
         {onClose && mobileOpen && (
           <button
             type="button"
-            className="sidebar-close"
+            className={sidebarStyles.close}
             onClick={onClose}
             aria-label="Fechar menu"
           >
@@ -64,7 +77,7 @@ function Sidebar({
         )}
       </div>
 
-      <nav className="sidebar-nav">
+      <nav className={sidebarStyles.nav}>
         {navigationItems.map(({ label, href, icon: Icon }) => {
           const active =
             href === "/"
@@ -75,7 +88,7 @@ function Sidebar({
               key={href}
               to={href}
               onClick={onClose}
-              className={["sidebar-link", active && "active"]
+              className={[sidebarStyles.link, active && sidebarStyles.active]
                 .filter(Boolean)
                 .join(" ")}
               aria-current={active ? "page" : undefined}
@@ -84,7 +97,7 @@ function Sidebar({
               <span>{label}</span>
               {active && (
                 <ChevronRight
-                  className="sidebar-current size-4"
+                  className={`${sidebarStyles.current} size-4`}
                   aria-hidden="true"
                 />
               )}
@@ -93,13 +106,59 @@ function Sidebar({
         })}
       </nav>
 
-      <div className="sidebar-section">
+      <div className={`${sidebarStyles.section} ${sidebarStyles.communities}`}>
+        <span className="eyebrow">suas comunidades</span>
+        {communitiesLoading ? (
+          <span className={sidebarStyles.hint}>Carregando...</span>
+        ) : communities?.length ? (
+          communities.map((community) => {
+            const active = location.pathname.startsWith(
+              `/communities/${community.id}`
+            )
+            return (
+              <Link
+                key={community.id}
+                to={`/communities/${community.id}`}
+                onClick={onClose}
+                className={[
+                  sidebarStyles.link,
+                  sidebarStyles.communityLink,
+                  active && sidebarStyles.active,
+                ]
+                  .filter(Boolean)
+                  .join(" ")}
+                aria-current={active ? "page" : undefined}
+              >
+                <span
+                  className={sidebarStyles.communityAvatar}
+                  aria-hidden="true"
+                >
+                  {community.photo ? (
+                    <img src={community.photo} alt="" />
+                  ) : (
+                    community.name.slice(0, 1).toUpperCase()
+                  )}
+                </span>
+                <span className={sidebarStyles.communityName}>
+                  {community.name}
+                </span>
+              </Link>
+            )
+          })
+        ) : (
+          <span className={sidebarStyles.hint}>
+            Você ainda não participa de comunidades.
+          </span>
+        )}
+      </div>
+
+      <div className={sidebarStyles.section}>
         <span className="eyebrow">em breve</span>
-        <div className="sidebar-disabled" aria-disabled="true">
+        <div className={sidebarStyles.disabled} aria-disabled="true">
           <Bell className="size-[18px]" aria-hidden="true" />
           <span>Notificações</span>
         </div>
-        <div className="sidebar-disabled" aria-disabled="true">
+        <div className={sidebarStyles.disabled} aria-disabled="true">
           <MessageCircle className="size-[18px]" aria-hidden="true" />
           <span>Mensagens</span>
         </div>
@@ -135,12 +194,12 @@ export function Navbar() {
   return (
     <>
       <header className="app-header">
-        <div className="header-inner">
-          <div className="header-leading">
+        <div className={navbarStyles.inner}>
+          <div className={navbarStyles.leading}>
             {user && (
               <button
                 type="button"
-                className="mobile-menu-btn"
+                className={navbarStyles.menuButton}
                 onClick={() => setMenuOpen((open) => !open)}
                 aria-label="Abrir menu"
                 aria-expanded={menuOpen}
@@ -148,18 +207,26 @@ export function Navbar() {
                 <Menu className="size-5" aria-hidden="true" />
               </button>
             )}
-            <Link to="/" className="brand" aria-label="newkut — início">
-              <img className="brand-logo" src="/newkut.png" alt="" />
+            <Link
+              to="/"
+              className={navbarStyles.brand}
+              aria-label="newkut — início"
+            >
+              <img className={navbarStyles.logo} src="/newkut.png" alt="" />
               <span>newkut</span>
             </Link>
           </div>
 
-          <form role="search" onSubmit={handleSearch} className="navbar-search">
+          <form
+            role="search"
+            onSubmit={handleSearch}
+            className={navbarStyles.search}
+          >
             <label htmlFor="navbar-search" className="sr-only">
               Buscar pessoas e comunidades
             </label>
             <Search
-              className="navbar-search-icon size-[18px]"
+              className={`${navbarStyles.searchIcon} size-[18px]`}
               aria-hidden="true"
             />
             <Input
@@ -172,11 +239,11 @@ export function Navbar() {
             />
           </form>
 
-          <div className="header-actions">
+          <div className={navbarStyles.actions}>
             {user && (
               <button
                 type="button"
-                className="btn small primary navbar-create-btn"
+                className="btn small primary"
                 onClick={() => setCreatePostOpen(true)}
               >
                 <Plus className="size-4" aria-hidden="true" />
@@ -203,7 +270,7 @@ export function Navbar() {
               <>
                 <Link
                   to={user.username ? `/u/${user.username}` : "/me"}
-                  className="avatar-btn"
+                  className={`avatar-btn ${navbarStyles.avatar}`}
                   aria-label="Abrir meu perfil"
                   style={
                     user.profilePicture
@@ -253,12 +320,16 @@ export function Navbar() {
         />
       )}
       {user && (
-        <Sidebar onClose={() => setMenuOpen(false)} mobileOpen={menuOpen} />
+        <Sidebar
+          userId={user.id}
+          onClose={() => setMenuOpen(false)}
+          mobileOpen={menuOpen}
+        />
       )}
       {user && menuOpen && (
         <button
           type="button"
-          className="sidebar-overlay"
+          className={`sidebar-overlay ${sidebarStyles.overlay}`}
           aria-label="Fechar menu"
           onClick={() => setMenuOpen(false)}
         />
